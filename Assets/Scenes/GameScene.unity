@@ -2862,6 +2862,7 @@ GameObject:
   m_Component:
   - component: {fileID: 990364926}
   - component: {fileID: 990364925}
+  - component: {fileID: 990364927}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -2900,6 +2901,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &990364927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 990364924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55a35b84c1ee73749b318bbe09f97f7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1026882641
 GameObject:
   m_ObjectHideFlags: 0
@@ -4329,6 +4342,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Glass_Lab_test_tube with liquid
+      objectReference: {fileID: 0}
+    - target: {fileID: 4661188770769472284, guid: cbb3159864b0a1348ab992ae9813d64d,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4661188770769472284, guid: cbb3159864b0a1348ab992ae9813d64d,
+        type: 3}
+      propertyPath: m_TagString
+      value: Selectable
       objectReference: {fileID: 0}
     - target: {fileID: 5468512139057648038, guid: cbb3159864b0a1348ab992ae9813d64d,
         type: 3}
