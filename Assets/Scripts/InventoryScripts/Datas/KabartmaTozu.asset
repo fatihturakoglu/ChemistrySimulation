@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9301228ef65451438e144596593df12, type: 3}
+  m_Name: KabartmaTozu
+  m_EditorClassIdentifier: 
+  itemName: Kabartma Tozu
+  itemDescription: Toz
+  itemIcon: {fileID: 21300000, guid: 7b733344b5a998642a57291d449cef9a, type: 3}
+  itemPrefab: {fileID: 8267949136427365993, guid: 8db10b083c06bae46ac1510f8975f9ee,
+    type: 3}
