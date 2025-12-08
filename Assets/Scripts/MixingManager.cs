@@ -30,7 +30,9 @@ public class MixingManager : MonoBehaviour
         {
             highlight = raycastHit.transform;
             if (Input.GetMouseButtonDown(0) && highlight.CompareTag("Item")) {
-                AddIngredient();
+                if (!isAdding) {
+                    AddIngredient();
+                }
             }
         }
         else { //raycast ile bir nesne algýlanmýyorsa
@@ -73,7 +75,8 @@ public class MixingManager : MonoBehaviour
     }
 
     private void PlayAddAnimation() {
-        selectedIngredient.DORotate(Vector3.right * 90f, (addingTime - 0.1f) / 2)
+        float timeOffset = 0.05f; //eðer animasyon süresi adding süresinden fazla olursa animasyonda takýlý kalýyor
+        selectedIngredient.DORotate(Vector3.right * 90f, (addingTime - timeOffset) / 2)
             .SetLoops(2, LoopType.Yoyo)
             .SetEase(Ease.OutCubic); //Ease.OutCubic //Ease.OutCirc //Ease.OutBack
     }
