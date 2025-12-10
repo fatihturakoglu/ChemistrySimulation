@@ -23,12 +23,7 @@ public class IngredientManager : MonoBehaviour
     private Quaternion lastIngredientRotation;
 
     private bool isAdding;
-
-    private void Start() {
-        selectedIngredient = null;
-        highlight = null;
-        isAdding = false;
-    }
+    
 
     private void Update() {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -38,12 +33,10 @@ public class IngredientManager : MonoBehaviour
             highlight = raycastHit.transform;
             if (Input.GetMouseButtonDown(0) && highlight.CompareTag("Item")) {
                 if (!isAdding) {
-                    if (highlight.TryGetComponent(out Rigidbody rb)) {
+                    if (highlight.TryGetComponent(out Rigidbody rb))
                         AddSolidIngredient(highlight, rb);
-                    }
-                    else {
-                        AddIngredient(highlight);
-                    }
+                    else 
+                        AddReusableIngredient(highlight);
                 }
             }
         }
@@ -54,7 +47,7 @@ public class IngredientManager : MonoBehaviour
         HandleAddingIngredient();
 
     }
-    private void AddIngredient(Transform highlight) {
+    private void AddReusableIngredient(Transform highlight) {
         selectedIngredient = highlight;
 
         //malzemenin masadaki konumunu ve rotasyonunu tutuyor
@@ -64,12 +57,12 @@ public class IngredientManager : MonoBehaviour
         selectedIngredient.position = addingPositionTransform.position;
         selectedIngredient.transform.rotation = Quaternion.Euler(0, 0, 0);
 
-        isAdding = true;
         addingTimeCounter = addingTime;
+        isAdding = true;
+        
         Debug.Log("Malzeme ekleniyor...");
 
         PlayAddAnimation();
-        TryAddingIngredientToBeaker(selectedIngredient);
     }
     private void AddSolidIngredient(Transform highlight, Rigidbody rb) {
         selectedIngredient = highlight; //- 1.3f
@@ -80,18 +73,10 @@ public class IngredientManager : MonoBehaviour
         rb.isKinematic = false;
         rb.useGravity = true;
 
-        Debug.Log("Katý malzeme eklendi!");
-        TryAddingIngredientToBeaker(selectedIngredient); //?
-    }
-
-    //selectedingredient deðiþkeni üzerinden if yapýlmamalý çünkü sürekli güncelleniyor!!
-    //düzeltilecek
-    private void TryAddingIngredientToBeaker(Transform selectedIngredient) {
-        if (selectedIngredient != null && selectedIngredient.TryGetComponent(out LabObject labObject)) {
-            OnIngredientAdded?.Invoke(this, new OnIngredientAddedEventArgs {
-                labObject = labObject
-            });
-        }
+        addingTimeCounter = addingTime / 2;
+        isAdding = true;
+        
+        Debug.Log("Katý malzeme ekleniyor...");
     }
 
     private void HandleAddingIngredient() {
@@ -99,16 +84,27 @@ public class IngredientManager : MonoBehaviour
             addingTimeCounter -= Time.deltaTime;
             if (selectedIngredient != null && addingTimeCounter <= 0f) {
                 //malzemenin masadaki konumunu ve rotasyonuna geri döndürüyor
-                selectedIngredient.position = lastIngredientPosition;
-                selectedIngredient.rotation = lastIngredientRotation;
+                if (!selectedIngredient.TryGetComponent(out Rigidbody rb)) {
+                    selectedIngredient.position = lastIngredientPosition;
+                    selectedIngredient.rotation = lastIngredientRotation;
+                }
 
+                Debug.Log("Malzeme eklendi!");
+
+                TryAddingIngredientToBeaker(selectedIngredient);
                 selectedIngredient = null;
                 isAdding = false;
-                Debug.Log("Malzeme eklendi!");
+
             }
         }
     }
-
+    private void TryAddingIngredientToBeaker(Transform selectedIngredient) { //karýþým hazýrlanmak istiyorsa
+        if (selectedIngredient.TryGetComponent(out LabObject labObject)) {   //muhakkak nesnelerde labobject scripti olmalý
+            OnIngredientAdded?.Invoke(this, new OnIngredientAddedEventArgs { //yoksa malzeme eklendi sayýlmaz
+                labObject = labObject
+            });
+        }
+    }
     private void PlayAddAnimation() {
         float timeOffset = 0.05f; //eðer animasyon süresi adding süresinden fazla olursa animasyonda takýlý kalýyor
         selectedIngredient.DORotate(Vector3.right * 90f, (addingTime - timeOffset) / 2)
