@@ -11,7 +11,7 @@ public class SCInventory : ScriptableObject
     {
         foreach (Slot slot in InventorySlots)
         {
-            if (!slot.isFull) // slot.isFull == false ile aynıdır, daha kısa yazım.
+            if (slot.isFull == false) 
             {
                 slot.addItemToSlot(newItem);
                 slot.isFull = true;
@@ -20,7 +20,7 @@ public class SCInventory : ScriptableObject
         }
 
         Debug.Log("Çanta Tamamen Dolu! Eşya alınamadı.");
-        return false; // BAŞARISIZ döndür.
+        return false; 
     }
 }
 
