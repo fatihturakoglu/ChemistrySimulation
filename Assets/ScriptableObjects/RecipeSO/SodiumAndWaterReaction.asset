@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c520473da1f99fa4b9773b320af54086, type: 3}
+  m_Name: SodiumAndWaterReaction
+  m_EditorClassIdentifier: 
+  recipeName: SodiumAndWater
+  requiredIngredients:
+  - {fileID: 11400000, guid: 9e024b7036845764bb3fb5f91b2ec089, type: 2}
+  - {fileID: 11400000, guid: 96a0eb7b257537048a03e71320e00c99, type: 2}
+  reaction: {fileID: 2181926753104930031, guid: d828ac74261ac254eadd8e83d573d715,
+    type: 3}

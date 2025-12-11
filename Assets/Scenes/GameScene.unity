@@ -6595,6 +6595,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ingredientManager: {fileID: 1266009741}
+  allRecipes:
+  - {fileID: 11400000, guid: 3538c492ab01da8428fae91d7589d3fa, type: 2}
 --- !u!4 &543450653643078483
 Transform:
   m_ObjectHideFlags: 0

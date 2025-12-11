@@ -1,0 +1,7 @@
+1.ScriptableObjects klasöründeki RecipeSO klasöründe yeni bir RecipeSO objesi oluþturulur
+2.bu objeye tarif adý ve LabObjectSO tipinden nesneler eklenir
+3.tepkime için yeni bir gameobject oluþturulur, bu gameobject için de bir
+	tepkime scripti oluþturulur ve RecipeSO'ya atanýr
+4.tepkime sciptinde Start() metodunda tepkimenin nasýl gerçekleþtirileceði yazýlýr
+5.daha sonra bu oluþturulan tarif (RecipeSO objesi) Beaker nesnesine
+(beher) all recipes kýsmýna eklenir
