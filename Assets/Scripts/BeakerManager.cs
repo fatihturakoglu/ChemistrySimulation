@@ -8,6 +8,8 @@ public class Beaker : MonoBehaviour {
 
     [SerializeField] private List<RecipeSO> allRecipes;
 
+    [SerializeField] private MeshRenderer liquidWaterMesh;
+
     private List<LabObject> labObjects;
 
     private void Start() {
@@ -45,7 +47,7 @@ public class Beaker : MonoBehaviour {
 
     private void PerformReaction(RecipeSO recipe) {
         Debug.Log("Tepkime baþladý: " + recipe.recipeName);
-        float yOffset = 0.1f;
+        float yOffset = 0.11f;
         Vector3 reactionPos = transform.position;
         reactionPos.y += yOffset;
 
@@ -62,11 +64,24 @@ public class Beaker : MonoBehaviour {
                 Destroy(ingredient.gameObject); //tekrar kullanýlmayan maddeler yok olsun
         }
 
+        ResetLiquid();
         labObjects.Clear(); //tepkime olunca beherdeki tüm maddeler sýfýrlansýn
     }
 
     private void AddIngredient(LabObject labObject) {
         labObjects.Add(labObject);
+
+        bool isLiquid = labObject.GetLabObjectSO().isLiquid; //sudan baþka bir sývý eklenecekse metot deðiþmeli
+        if (isLiquid) {
+            liquidWaterMesh.gameObject.SetActive(true);
+        }
+
         CheckRecipes();
+    }
+
+    private void ResetLiquid() { //sudan baþka bir sývý eklenecekse metot deðiþmeli
+        if (liquidWaterMesh.gameObject.activeSelf) {
+            liquidWaterMesh.gameObject.SetActive(false);
+        }
     }
 }

@@ -45,7 +45,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 366c7142bfd171f428dfdfd26add247b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  explosionEffect: {fileID: 5789304081547878311}
 --- !u!1001 &5951421922713995379
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -105,6 +104,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 198175801688348628, guid: 68ca548eaa5959946b953458643e7dde,
         type: 3}
+      propertyPath: LightsModule.ratio
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 198175801688348628, guid: 68ca548eaa5959946b953458643e7dde,
+        type: 3}
+      propertyPath: LightsModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 198175801688348628, guid: 68ca548eaa5959946b953458643e7dde,
+        type: 3}
+      propertyPath: ShapeModule.arc.mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 198175801688348628, guid: 68ca548eaa5959946b953458643e7dde,
+        type: 3}
+      propertyPath: LightsModule.maxLights
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 198175801688348628, guid: 68ca548eaa5959946b953458643e7dde,
+        type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 198175801688348628, guid: 68ca548eaa5959946b953458643e7dde,
+        type: 3}
       propertyPath: InitialModule.startSize.scalar
       value: 0.25
       objectReference: {fileID: 0}
@@ -112,6 +136,31 @@ PrefabInstance:
         type: 3}
       propertyPath: InitialModule.startSize.minScalar
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 198175801688348628, guid: 68ca548eaa5959946b953458643e7dde,
+        type: 3}
+      propertyPath: LightsModule.intensityCurve.scalar
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 198175801688348628, guid: 68ca548eaa5959946b953458643e7dde,
+        type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.ctime1
+      value: 3778
+      objectReference: {fileID: 0}
+    - target: {fileID: 198175801688348628, guid: 68ca548eaa5959946b953458643e7dde,
+        type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.ctime3
+      value: 45489
+      objectReference: {fileID: 0}
+    - target: {fileID: 198175801688348628, guid: 68ca548eaa5959946b953458643e7dde,
+        type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.m_ColorSpace
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 198175801688348628, guid: 68ca548eaa5959946b953458643e7dde,
+        type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.scalar
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 198814760465859298, guid: 68ca548eaa5959946b953458643e7dde,
         type: 3}
@@ -126,19 +175,13 @@ PrefabInstance:
     - target: {fileID: 198942329355805636, guid: 68ca548eaa5959946b953458643e7dde,
         type: 3}
       propertyPath: InitialModule.startSize.scalar
-      value: 2.5
+      value: 0.625
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 68ca548eaa5959946b953458643e7dde, type: 3}
---- !u!198 &5789304081547878311 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 198175801688348628, guid: 68ca548eaa5959946b953458643e7dde,
-    type: 3}
-  m_PrefabInstance: {fileID: 5951421922713995379}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5951636624999970245 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4441266138185142, guid: 68ca548eaa5959946b953458643e7dde,

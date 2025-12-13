@@ -15,3 +15,4 @@ MonoBehaviour:
   objectName: Water
   prefab: {fileID: 5520768653304784539, guid: 054c7ddd19ed11647ac48ea37ede064d, type: 3}
   isReusable: 1
+  isLiquid: 1
