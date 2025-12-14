@@ -3,23 +3,36 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Beaker : MonoBehaviour {
-    [SerializeField] private IngredientManager ingredientManager;
+public class BeakerManager : MonoBehaviour {
+    public static BeakerManager Instance { get; private set; }
 
+    [SerializeField] private SelectionManager ingredientManager;
     [SerializeField] private List<RecipeSO> allRecipes;
-
     [SerializeField] private MeshRenderer liquidWaterMesh;
 
+    private bool isReactionPerforming;
+    private float reactPerformTime = .5f;
+    private RecipeSO currentRecipe;
+
     private List<LabObject> labObjects;
+
+    private void ÝngredientManager_OnIngredientAdded(object sender, SelectionManager.OnIngredientAddedEventArgs e) {
+        AddIngredient(e.labObject);
+        Debug.Log(e.labObject.GetLabObjectSO().objectName + " þuan beherde mevcut.");
+    }
 
     private void Start() {
         ingredientManager.OnIngredientAdded += ÝngredientManager_OnIngredientAdded;
         labObjects = new List<LabObject>();
+
+        if(Instance != null) {
+            Debug.LogError("Birden fazla BeakerManager nesnesi var!");
+        }
+        Instance = this;
     }
 
-    private void ÝngredientManager_OnIngredientAdded(object sender, IngredientManager.OnIngredientAddedEventArgs e) {
-        AddIngredient(e.labObject);
-        Debug.Log(e.labObject.GetLabObjectSO().objectName + " þuan beherde mevcut.");
+    private void Update() {
+        HandleReaction();
     }
 
     private void CheckRecipes() {
@@ -39,8 +52,28 @@ public class Beaker : MonoBehaviour {
 
             // Check if lists are identical (no missing, no extra, same count)
             if (!missingIngredients && !extraIngredients && currentLabObjectsSO.Count == recipe.requiredIngredients.Count) {
-                PerformReaction(recipe);
+                //PerformReaction(recipe); tepkime süresini beklemek istiyoruz, o yüzden bool ile aktif edeceðiz
+                StartReaction(recipe);
                 return; // Stop checking after finding a match
+            }
+        }
+    }
+
+    private void StartReaction(RecipeSO recipe) {
+        currentRecipe = recipe;
+        isReactionPerforming = true;
+    }
+
+    private void StopReaction() {
+        currentRecipe = null;
+        isReactionPerforming = false;
+    }
+
+    private void HandleReaction() {
+        if (isReactionPerforming) {
+            reactPerformTime -= Time.deltaTime;
+            if (reactPerformTime <= 0 && currentRecipe != null) {
+                PerformReaction(currentRecipe);
             }
         }
     }
@@ -56,6 +89,7 @@ public class Beaker : MonoBehaviour {
         }
 
         ResetBeaker();
+        StopReaction();
     }
 
     private void ResetBeaker() {
@@ -69,7 +103,8 @@ public class Beaker : MonoBehaviour {
     }
 
     private void AddIngredient(LabObject labObject) {
-        labObjects.Add(labObject);
+        if(!labObjects.Contains(labObject)) //ayný malzemeden iki defa koymasýn
+            labObjects.Add(labObject);
 
         bool isLiquid = labObject.GetLabObjectSO().isLiquid; //sudan baþka bir sývý eklenecekse metot deðiþmeli
         if (isLiquid) {

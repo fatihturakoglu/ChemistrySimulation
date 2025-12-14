@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class IngredientManager : MonoBehaviour
+public class SelectionManager : MonoBehaviour
 {
     public event EventHandler<OnIngredientAddedEventArgs> OnIngredientAdded;
     public class OnIngredientAddedEventArgs : EventArgs {
@@ -16,7 +16,7 @@ public class IngredientManager : MonoBehaviour
     [SerializeField] private Transform addingPositionTransform; //cauldron altýndaki addingposition nesnesi
     private Transform selectedIngredient, highlight;
 
-    private float addingTime = 1.5f;
+    private float addingTime = 2f;
     private float addingTimeCounter;
 
     private Vector3 lastIngredientPosition;
@@ -62,7 +62,7 @@ public class IngredientManager : MonoBehaviour
         
         Debug.Log("Malzeme ekleniyor...");
 
-        PlayAddAnimation();
+        PlayAddAnimation(selectedIngredient);
     }
     private void AddSolidIngredient(Transform highlight, Rigidbody rb) {
         selectedIngredient = highlight; //- 1.3f
@@ -73,7 +73,7 @@ public class IngredientManager : MonoBehaviour
         rb.isKinematic = false;
         rb.useGravity = true;
 
-        addingTimeCounter = addingTime / 2;
+        addingTimeCounter = addingTime / 4;
         isAdding = true;
         
         Debug.Log("Katý malzeme ekleniyor...");
@@ -105,11 +105,17 @@ public class IngredientManager : MonoBehaviour
             });
         }
     }
-    private void PlayAddAnimation() {
+    private void PlayAddAnimation(Transform selectedIngredient) {
         float timeOffset = 0.05f; //eðer animasyon süresi adding süresinden fazla olursa animasyonda takýlý kalýyor
         selectedIngredient.DORotate(Vector3.right * 90f, (addingTime - timeOffset) / 2)
             .SetLoops(2, LoopType.Yoyo)
             .SetEase(Ease.OutCubic); //Ease.OutCubic //Ease.OutCirc //Ease.OutBack
+
+        var liquidSpillAnimation = selectedIngredient.GetComponentInChildren<ParticleSystem>();
+
+        if (liquidSpillAnimation != null) {
+            liquidSpillAnimation.Play();
+        }
     }
     
 }

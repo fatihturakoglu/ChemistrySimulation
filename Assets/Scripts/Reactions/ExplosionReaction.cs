@@ -5,11 +5,23 @@ using UnityEngine;
 public class ExplosionReaction : MonoBehaviour
 {
     private float life = 3f;
+    private float destroyBeakerCounter = 2f;
+
+    private MeshRenderer beakerMesh;
     
-    void Start()
+    private void Start()
     {
         Debug.Log("Patlama Tepkimesi");
-        Destroy(gameObject, life); 
+        Destroy(gameObject, life);
+        
+        beakerMesh = BeakerManager.Instance.GetComponentInChildren<MeshRenderer>();
+        beakerMesh.enabled = false;    
+    }
+
+    private void Update() {
+        destroyBeakerCounter -= Time.deltaTime;
+        if(destroyBeakerCounter <= 0 && !beakerMesh.enabled)
+            beakerMesh.enabled = true;
     }
 
 }

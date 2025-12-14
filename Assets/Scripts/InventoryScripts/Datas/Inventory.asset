@@ -16,13 +16,13 @@ MonoBehaviour:
   - isFull: 1
     item: {fileID: 11400000, guid: cb5e8c7c4d2715e408fd608b85117a38, type: 2}
   - isFull: 1
-    item: {fileID: 11400000, guid: cb5e8c7c4d2715e408fd608b85117a38, type: 2}
-  - isFull: 1
-    item: {fileID: 11400000, guid: cb5e8c7c4d2715e408fd608b85117a38, type: 2}
-  - isFull: 1
-    item: {fileID: 11400000, guid: cb5e8c7c4d2715e408fd608b85117a38, type: 2}
-  - isFull: 1
     item: {fileID: 11400000, guid: 57c00a8aaaecaf642beb6ea39c7de785, type: 2}
+  - isFull: 1
+    item: {fileID: 11400000, guid: cb5e8c7c4d2715e408fd608b85117a38, type: 2}
+  - isFull: 0
+    item: {fileID: 0}
+  - isFull: 0
+    item: {fileID: 0}
   - isFull: 0
     item: {fileID: 0}
   - isFull: 0
