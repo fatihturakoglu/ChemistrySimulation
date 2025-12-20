@@ -8,7 +8,7 @@ public class BeakerManager : MonoBehaviour {
 
     [SerializeField] private SelectionManager ingredientManager;
     [SerializeField] private List<RecipeSO> allRecipes;
-    [SerializeField] private MeshRenderer liquidWaterMesh;
+    [SerializeField] private MeshRenderer mainLiquidMesh;
 
     private bool isReactionPerforming;
     private float reactPerformTime = .5f;
@@ -107,16 +107,22 @@ public class BeakerManager : MonoBehaviour {
             labObjects.Add(labObject);
 
         bool isLiquid = labObject.GetLabObjectSO().isLiquid; //sudan baþka bir sývý eklenecekse metot deðiþmeli
-        if (isLiquid) {
-            liquidWaterMesh.gameObject.SetActive(true);
-        }
+        if (isLiquid) 
+            HandleLiquids(labObject);
 
         CheckRecipes();
     }
 
+    private void HandleLiquids(LabObject labObject) {
+        var liquidColor = labObject.GetLabObjectSO().color;
+
+        mainLiquidMesh.material.color = liquidColor;
+        mainLiquidMesh.gameObject.SetActive(true);
+    }
+
     private void ResetLiquid() { //sudan baþka bir sývý eklenecekse metot deðiþmeli
-        if (liquidWaterMesh.gameObject.activeSelf) {
-            liquidWaterMesh.gameObject.SetActive(false);
+        if (mainLiquidMesh.gameObject.activeSelf) {
+            mainLiquidMesh.gameObject.SetActive(false);
         }
     }
 }
