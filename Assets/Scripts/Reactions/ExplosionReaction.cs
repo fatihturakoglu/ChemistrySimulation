@@ -15,13 +15,18 @@ public class ExplosionReaction : MonoBehaviour
         Destroy(gameObject, life);
         
         beakerMesh = BeakerManager.Instance.GetComponentInChildren<MeshRenderer>();
-        beakerMesh.enabled = false;    
+        DestroyBeaker();
     }
 
     private void Update() {
         destroyBeakerCounter -= Time.deltaTime;
         if(destroyBeakerCounter <= 0 && !beakerMesh.enabled)
             beakerMesh.enabled = true;
+    }
+
+    private void DestroyBeaker() {
+        beakerMesh.enabled = false;
+        BeakerManager.Instance.GetMainLiquidRenderer().gameObject.SetActive(false);
     }
 
 }

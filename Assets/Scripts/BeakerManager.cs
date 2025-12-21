@@ -8,7 +8,11 @@ public class BeakerManager : MonoBehaviour {
 
     [SerializeField] private SelectionManager ingredientManager;
     [SerializeField] private List<RecipeSO> allRecipes;
-    [SerializeField] private MeshRenderer mainLiquidMesh;
+
+    [SerializeField] private MeshRenderer mainLiquidRenderer;
+    [SerializeField] private MeshRenderer[] layeredLiquidRenderers;
+
+    private List<Color> addedLiquidColors = new List<Color>();
 
     private bool isReactionPerforming;
     private float reactPerformTime = .5f;
@@ -35,7 +39,7 @@ public class BeakerManager : MonoBehaviour {
         HandleReaction();
     }
 
-    private void CheckRecipes() {
+    private void CheckRecipes() { //ekstra malzeme varsa tepkime gerçekleþmez, düzeltilebilir
         List<LabObjectSO> currentLabObjectsSO = new List<LabObjectSO>();
 
         foreach (LabObject labObject in labObjects) {
@@ -55,7 +59,7 @@ public class BeakerManager : MonoBehaviour {
                 //PerformReaction(recipe); tepkime süresini beklemek istiyoruz, o yüzden bool ile aktif edeceðiz
                 StartReaction(recipe);
                 return; // Stop checking after finding a match
-            }
+            } 
         }
     }
 
@@ -97,9 +101,8 @@ public class BeakerManager : MonoBehaviour {
             if (!ingredient.GetLabObjectSO().isReusable)
                 Destroy(ingredient.gameObject); //tekrar kullanýlmayan maddeler yok olsun
         }
-
-        ResetLiquid();
-        labObjects.Clear(); //tepkime olunca beherdeki tüm maddeler sýfýrlansýn
+        ResetLiquid(); //içindeki sývýnýn sýfýrlanmasýný tepkime scriptleri halletsin
+        labObjects.Clear(); //tepkime olunca beherdeki tüm maddeler sýfýrlansýn(sadece liste olarak)
     }
 
     private void AddIngredient(LabObject labObject) {
@@ -107,22 +110,48 @@ public class BeakerManager : MonoBehaviour {
             labObjects.Add(labObject);
 
         bool isLiquid = labObject.GetLabObjectSO().isLiquid; //sudan baþka bir sývý eklenecekse metot deðiþmeli
-        if (isLiquid) 
+        if (isLiquid) {
             HandleLiquids(labObject);
-
+        }
+            
+            
         CheckRecipes();
     }
 
-    private void HandleLiquids(LabObject labObject) {
-        var liquidColor = labObject.GetLabObjectSO().color;
+    private void HandleLiquids(LabObject labObject) { //sývý rengini belirler
+        addedLiquidColors.Add(labObject.GetLabObjectSO().color);
 
-        mainLiquidMesh.material.color = liquidColor;
-        mainLiquidMesh.gameObject.SetActive(true);
+        int totalLiquidCount = addedLiquidColors.Count;
+        float TotalR = 0;
+        float TotalG = 0;
+        float TotalB = 0;
+
+        foreach(Color c in addedLiquidColors) {
+            TotalR += c.r;
+            TotalG += c.g;
+            TotalB += c.b;
+        }
+        Color liquidColor = new Color(TotalR / totalLiquidCount, TotalG / totalLiquidCount, TotalB / totalLiquidCount);
+        mainLiquidRenderer.material.color = liquidColor;
+
+        //var liquidColor = labObject.GetLabObjectSO().color;
+        //mainLiquidMesh.material.color = liquidColor;
+        mainLiquidRenderer.gameObject.SetActive(true);
     }
 
     private void ResetLiquid() { //sudan baþka bir sývý eklenecekse metot deðiþmeli
-        if (mainLiquidMesh.gameObject.activeSelf) {
-            mainLiquidMesh.gameObject.SetActive(false);
-        }
+        addedLiquidColors.Clear();
+        //mainLiquidRenderer.gameObject.SetActive(false);
+        //foreach(MeshRenderer renderer in layeredLiquidRenderers) {
+        //    renderer.gameObject.SetActive(false);
+        //}     
+    }
+
+    public MeshRenderer GetMainLiquidRenderer() {
+        return mainLiquidRenderer;
+    }
+
+    public MeshRenderer[] GetLayeredLiquidRenderers() {
+        return layeredLiquidRenderers;
     }
 }
