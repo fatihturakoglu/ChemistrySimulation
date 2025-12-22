@@ -1,36 +1,41 @@
 ﻿using UnityEngine;
-using UnityEngine.UI; // UI işlemleri için şart
-using TMPro;    // TextMeshPro işlemleri için şart
+using UnityEngine.UI;
+using TMPro;
 
 public class InventorySlot : MonoBehaviour
 {
-    public Image icon;          // İçindeki "Icon" objesi
-    public TMP_Text itemName; 
+    public Image icon;
+    public TMP_Text itemName;
+    public GameObject selectionFrame;
 
-    SCItem item;  // Bu slotta şu an hangi eşya verisi var?
+    private SCItem item;
 
-    // Slota eşya ekleme fonksiyonu
     public void AddItem(SCItem newItem)
     {
+        // Eğer zaten aynı eşya varsa, atama yapma ki animasyon bozulmasın
+        if (item == newItem) return;
+
         item = newItem;
-        itemName.text = item.itemName; 
-        icon.sprite = item.itemIcon; 
-        icon.enabled = true;         
+        if (itemName != null) itemName.text = item.itemName;
+
+        icon.sprite = item.itemIcon;
+        icon.enabled = true;
+
+        // Rotasyonu her eklemede sıfırla (Bozulmayı önler)
+        icon.rectTransform.localRotation = Quaternion.identity;
     }
 
     public void ClearSlot()
     {
         item = null;
-        if (itemName != null) itemName.text = ""; // Yazıyı temizle
-
-        icon.sprite = null; // Resmi kaldır
-        icon.enabled = false; // Resmi gizle
+        if (itemName != null) itemName.text = "";
+        icon.sprite = null;
+        icon.enabled = false;
     }
-    public void OnUseButton()
+
+    public void SetSelected(bool state)
     {
-        if (item != null)
-        {
-            Debug.Log(item.itemName + " kullanıldı!");
-        }
+        if (selectionFrame != null)
+            selectionFrame.SetActive(state);
     }
 }

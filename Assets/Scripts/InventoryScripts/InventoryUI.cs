@@ -1,52 +1,95 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class InventoryUI : MonoBehaviour
 {
-    public Transform itemsParent;   // Slotların olduğu Panel
-    public SCInventory inventoryData; // ScriptableObject verisi
+    public Transform itemsParent;
+    public SCInventory inventoryData;
 
-    InventorySlot[] uiSlots; // Ekrandaki slot kutucukları
+    [Header("Seçim Ayarları")]
+    public int selectedSlotIndex = 0;
+
+    InventorySlot[] uiSlots;
 
     void Start()
     {
-        // Panel'in altındaki tüm slot scriptlerini bul
         uiSlots = itemsParent.GetComponentsInChildren<InventorySlot>();
-
         UpdateUI();
+        UpdateSlotVisuals();
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.I))
+        // 1. Sayı Tuşları (Düzeltildi: Her biri farklı KeyCode ve Index)
+        if (Input.GetKeyDown(KeyCode.Alpha1)) { SetSelectedSlot(0); }
+        if (Input.GetKeyDown(KeyCode.Alpha2)) { SetSelectedSlot(1); }
+        if (Input.GetKeyDown(KeyCode.Alpha3)) { SetSelectedSlot(2); }
+        if (Input.GetKeyDown(KeyCode.Alpha4)) { SetSelectedSlot(3); }
+        if (Input.GetKeyDown(KeyCode.Alpha5)) { SetSelectedSlot(4); }
+        if (Input.GetKeyDown(KeyCode.Alpha6)) { SetSelectedSlot(5); }
+        if (Input.GetKeyDown(KeyCode.Alpha7)) { SetSelectedSlot(6); }
+        if (Input.GetKeyDown(KeyCode.Alpha8)) { SetSelectedSlot(7); }
+        if (Input.GetKeyDown(KeyCode.Alpha9)) { SetSelectedSlot(8); }
+        if (Input.GetKeyDown(KeyCode.Alpha0)) { SetSelectedSlot(9); }
+
+        // 2. Mouse Tekerleği
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        if (scroll > 0f)
         {
-            UpdateUI();
+            int nextSlot = selectedSlotIndex - 1;
+            if (nextSlot < 0) nextSlot = uiSlots.Length - 1;
+            SetSelectedSlot(nextSlot);
+        }
+        else if (scroll < 0f)
+        {
+            int nextSlot = selectedSlotIndex + 1;
+            if (nextSlot >= uiSlots.Length) nextSlot = 0;
+            SetSelectedSlot(nextSlot);
+        }
+
+        // DİKKAT: Buradaki UpdateUI() silindi! Sadece veri değişince MouseClickInventory üzerinden çağrılacak.
+    }
+
+    void SetSelectedSlot(int index)
+    {
+        if (uiSlots != null && index >= 0 && index < uiSlots.Length)
+        {
+            selectedSlotIndex = index;
+            UpdateSlotVisuals();
+            Debug.Log("Seçili Slot: " + selectedSlotIndex);
+        }
+    }
+
+    void UpdateSlotVisuals()
+    {
+        for (int i = 0; i < uiSlots.Length; i++)
+        {
+            // selectionFrame'i açıp kapatır
+            uiSlots[i].SetSelected(i == selectedSlotIndex);
         }
     }
 
     public void UpdateUI()
     {
-        // UI Slotlarımız kadar dönüyoruz
+        if (uiSlots == null) return;
+
         for (int i = 0; i < uiSlots.Length; i++)
         {
-            // Eğer veri tabanında bu sırada bir slot tanımı varsa
             if (i < inventoryData.InventorySlots.Count)
             {
-                // Veri tabanındaki o slotu al (isFull ve item bilgisini tutan class)
                 Slot dataSlot = inventoryData.InventorySlots[i];
-
-                // Eğer o slot doluysa ve içinde item varsa
-                if (dataSlot.isFull == true && dataSlot.item != null)
+                if (dataSlot.isFull && dataSlot.item != null)
                 {
-                    uiSlots[i].AddItem(dataSlot.item); // UI'ı güncelle
+                    uiSlots[i].AddItem(dataSlot.item);
                 }
                 else
                 {
-                    uiSlots[i].ClearSlot(); // Boşalt
+                    uiSlots[i].ClearSlot();
                 }
             }
             else
             {
-                uiSlots[i].ClearSlot(); // Veri yoksa boşalt
+                uiSlots[i].ClearSlot();
             }
         }
     }

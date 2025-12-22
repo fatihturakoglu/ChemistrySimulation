@@ -82,8 +82,13 @@ public class Outline : MonoBehaviour {
 
   void Awake() {
 
-    // Cache renderers
-    renderers = GetComponentsInChildren<Renderer>();
+    //// Cache renderers
+    //renderers = GetComponentsInChildren<Renderer>();
+
+    //Particle System renderer'larını devre dışı bırakıyoruz
+    var allRenderers = GetComponentsInChildren<Renderer>().ToList();
+    allRenderers.RemoveAll(r => r is ParticleSystemRenderer); 
+    renderers = allRenderers.ToArray();
 
     // Instantiate outline materials
     outlineMaskMaterial = Instantiate(Resources.Load<Material>(@"Materials/OutlineMask"));

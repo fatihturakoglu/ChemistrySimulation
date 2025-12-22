@@ -105,8 +105,9 @@ public class SelectionManager : MonoBehaviour
             });
         }
     }
-    private void PlayAddAnimation(Transform selectedIngredient) {
+    private void PlayAddAnimation(Transform selectedIngredient) { //düzelt
         float timeOffset = 0.05f; //eðer animasyon süresi adding süresinden fazla olursa animasyonda takýlý kalýyor
+
         selectedIngredient.DORotate(Vector3.right * 90f, (addingTime - timeOffset) / 2)
             .SetLoops(2, LoopType.Yoyo)
             .SetEase(Ease.OutCubic); //Ease.OutCubic //Ease.OutCirc //Ease.OutBack
@@ -114,8 +115,14 @@ public class SelectionManager : MonoBehaviour
         var liquidSpillAnimation = selectedIngredient.GetComponentInChildren<ParticleSystem>();
 
         if (liquidSpillAnimation != null) {
-            liquidSpillAnimation.Play();
+            //liquidSpillAnimation.Play();
+            StartCoroutine(PlayEffectDelayRoutine(liquidSpillAnimation, .3f));
         }
     }
-    
+
+    IEnumerator PlayEffectDelayRoutine(ParticleSystem effect, float duration) {
+        yield return new WaitForSeconds(duration);
+        effect.Play();
+    }
+
 }

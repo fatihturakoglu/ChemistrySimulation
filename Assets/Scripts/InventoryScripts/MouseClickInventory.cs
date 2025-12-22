@@ -1,31 +1,43 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro; // TextMeshPro kullanmak için gerekli kütüphane
-using DG.Tweening; // DOTween hatasını önlemek için
+using TMPro;
+using DG.Tweening;
 
 public class MouseClickInventory : MonoBehaviour
 {
-    [Header("Ayarlar")]
+    [Header("Referanslar")]
     public SCInventory playerInventory;
+    public InventoryUI inventoryUI; // Seçili slotu öğrenmek için gerekli
     public Camera mainCamera;
-    public float almaMesafesi = 3f;
-    public KeyCode almaTusu = KeyCode.E;
+
+    [Header("Ayarlar")]
+    public float etkilesimMesafesi = 3f;
+    public KeyCode etkilesimTusu = KeyCode.E;
 
     [Header("UI Ayarları")]
-    public TextMeshProUGUI etkilesimYazisi; // Hazırladığın Text objesini buraya sürükle
-    public Vector3 yaziOffseti = new Vector3(0, 0.5f, 0); // Yazı eşyanın ne kadar üstünde dursun?
+    public TextMeshProUGUI etkilesimYazisi;
+    public Vector3 yaziOffseti = new Vector3(0, 0.5f, 0);
 
-    private Item hedeflenenEsya; // Şu an baktığımız eşya
+    private Item hedeflenenDunyaEsyasi; // Yerden alınacak eşya
+    private ItemPlace hedeflenenMasaSlotu; // Masadaki koyulacak yer
 
     private void Update()
     {
-        EtkilesimKontrolu(); // Sürekli bakılan yeri kontrol et
+        EtkilesimKontrolu();
 
-        
-        if (hedeflenenEsya != null && Input.GetKeyDown(almaTusu))
+        if (Input.GetKeyDown(etkilesimTusu))
         {
-            EsyayiAl();
+            // Eğer bir eşyaya bakıyorsak AL
+            if (hedeflenenDunyaEsyasi != null)
+            {
+                EsyayiAl();
+            }
+            // Eğer masadaki bir boşluğa bakıyorsak KOY
+            else if (hedeflenenMasaSlotu != null)
+            {
+                EsyayiMasayaKoy();
+            }
         }
     }
 
@@ -34,67 +46,110 @@ public class MouseClickInventory : MonoBehaviour
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        // Işın bir şeye çarptı mı?
-        if (Physics.Raycast(ray, out hit, almaMesafesi))
+        if (Physics.Raycast(ray, out hit, etkilesimMesafesi))
         {
-            // Çarptığı şeyin üzerinde Item scripti var mı?
+            // 1. DURUM: Yerdeki bir eşyaya mı bakıyoruz?
             Item worldItem = hit.collider.GetComponent<Item>();
+            // 2. DURUM: Masadaki bir slota mı bakıyoruz?
+            ItemPlace chemSlot = hit.collider.GetComponent<ItemPlace>();
 
             if (worldItem != null)
             {
-                // EVET, BİR EŞYAYA BAKIYORUZ
-                hedeflenenEsya = worldItem;
-
-                // 1. Yazıyı görünür yap
-                etkilesimYazisi.gameObject.SetActive(true);
-
-                // 2. Yazıyı eşyanın 3D pozisyonundan 2D ekran pozisyonuna taşı
-                Vector3 dunyaPozisyonu = hit.transform.position + yaziOffseti;
-                Vector3 ekranPozisyonu = mainCamera.WorldToScreenPoint(dunyaPozisyonu);
-
-                etkilesimYazisi.transform.position = ekranPozisyonu;
-
-                // (İsteğe bağlı) Yazı içeriğini dinamik yapabilirsin
-                // etkilesimYazisi.text = worldItem.item.itemName + " Almak için [E]";
+                SetTarget(worldItem, null, hit.transform.position, "Almak için [" + etkilesimTusu + "]");
+            }
+            else if (chemSlot != null)
+            {
+                if (!chemSlot.isOccupied)
+                {
+                    SetTarget(null, chemSlot, hit.transform.position, "Koymak için [" + etkilesimTusu + "]");
+                }
+                else
+                {
+                    SetTarget(null, chemSlot, hit.transform.position, "Eşyayı Geri Al [" + etkilesimTusu + "]");
+                }
             }
             else
             {
-                // Eşya değil, başka bir duvara bakıyoruz
                 Sifirla();
             }
         }
         else
         {
-            // Hiçbir şeye bakmıyoruz (Boşluk)
             Sifirla();
         }
     }
 
+    void SetTarget(Item item, ItemPlace slot, Vector3 pos, string txt)
+    {
+        hedeflenenDunyaEsyasi = item;
+        hedeflenenMasaSlotu = slot;
+
+        etkilesimYazisi.gameObject.SetActive(true);
+        etkilesimYazisi.text = txt;
+
+        Vector3 ekranPozisyonu = mainCamera.WorldToScreenPoint(pos + yaziOffseti);
+        etkilesimYazisi.transform.position = ekranPozisyonu;
+    }
+
     void Sifirla()
     {
-        hedeflenenEsya = null;
+        hedeflenenDunyaEsyasi = null;
+        hedeflenenMasaSlotu = null;
         if (etkilesimYazisi != null) etkilesimYazisi.gameObject.SetActive(false);
     }
 
     void EsyayiAl()
     {
-        if (hedeflenenEsya != null && hedeflenenEsya.item != null)
+        if (playerInventory.AddItem(hedeflenenDunyaEsyasi.item))
         {
-            bool eklendi = playerInventory.AddItem(hedeflenenEsya.item);
+            hedeflenenDunyaEsyasi.transform.DOKill();
+            Destroy(hedeflenenDunyaEsyasi.gameObject);
+            inventoryUI.UpdateUI(); // UI'ı tazele
+            Sifirla();
+        }
+        else
+        {
+            Debug.Log("Çanta dolu!");
+        }
+    }
 
-            if (eklendi)
+    void EsyayiMasayaKoy()
+    {
+        // Masadaki slot doluysa geri al, boşsa envanterden koy
+        if (hedeflenenMasaSlotu.isOccupied)
+        {
+            if (playerInventory.AddItem(hedeflenenMasaSlotu.placedItem))
             {
-                // DOTween hatasını önlemek için animasyonları öldür
-                hedeflenenEsya.transform.DOKill();
-
-                Destroy(hedeflenenEsya.gameObject);
-
-                // Eşyayı aldık, artık bakılacak bir şey kalmadı, yazıyı gizle
+                hedeflenenMasaSlotu.RemoveItem();
+                inventoryUI.UpdateUI();
                 Sifirla();
             }
-            else
+        }
+        else
+        {
+            // Envanterde seçili olan slotu bul
+            int seciliIndex = inventoryUI.selectedSlotIndex;
+
+            if (seciliIndex < playerInventory.InventorySlots.Count)
             {
-                Debug.Log("Çanta dolu!");
+                Slot envanterSlotu = playerInventory.InventorySlots[seciliIndex];
+
+                if (envanterSlotu.isFull && envanterSlotu.item != null)
+                {
+                    // Masaya yerleştir
+                    hedeflenenMasaSlotu.PlaceItem(envanterSlotu.item);
+
+                    // Envanterden temizle
+                    envanterSlotu.item = null;
+                    envanterSlotu.isFull = false;
+
+                    inventoryUI.UpdateUI(); // Görseli güncelle
+                    Sifirla();
+                }
+                else
+                {
+                    Debug.Log("Seçili slot boş! Masaya bir şey koyamazsın.");
+                }
             }
         }
     }
