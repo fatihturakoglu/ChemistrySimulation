@@ -105,22 +105,22 @@ public class SelectionManager : MonoBehaviour
             });
         }
     }
-    private void PlayAddAnimation(Transform selectedIngredient) { //düzelt
+    private void PlayAddAnimation(Transform selectedIngredient) {
         float timeOffset = 0.05f; //eðer animasyon süresi adding süresinden fazla olursa animasyonda takýlý kalýyor
+        float spillAnimationCycleDuration = (addingTime - timeOffset) / 2;
 
-        selectedIngredient.DORotate(Vector3.right * 90f, (addingTime - timeOffset) / 2)
+        selectedIngredient.DORotate(Vector3.right * 90f, spillAnimationCycleDuration)
             .SetLoops(2, LoopType.Yoyo)
             .SetEase(Ease.OutCubic); //Ease.OutCubic //Ease.OutCirc //Ease.OutBack
 
         var liquidSpillAnimation = selectedIngredient.GetComponentInChildren<ParticleSystem>();
 
-        if (liquidSpillAnimation != null) {
-            //liquidSpillAnimation.Play();
-            StartCoroutine(PlayEffectDelayRoutine(liquidSpillAnimation, .3f));
-        }
+        if (liquidSpillAnimation != null) 
+            StartCoroutine(PlayEffectRoutine(liquidSpillAnimation, .2f));
+
     }
 
-    IEnumerator PlayEffectDelayRoutine(ParticleSystem effect, float duration) {
+    private IEnumerator PlayEffectRoutine(ParticleSystem effect, float duration) {
         yield return new WaitForSeconds(duration);
         effect.Play();
     }

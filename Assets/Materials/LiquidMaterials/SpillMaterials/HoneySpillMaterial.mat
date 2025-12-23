@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Additive EmberParticleMat 3
+  m_Name: HoneySpillMaterial
   m_Shader: {fileID: -6465566751694194690, guid: b53902ee95f35954a920b7d4f2dc6031,
     type: 3}
   m_Parent: {fileID: 0}
@@ -62,5 +62,5 @@ Material:
     - _ScrollSpeed: 0.5
     - _TwrilStrenght: 5.59
     m_Colors:
-    - _Color: {r: 0.13769306, g: 0.5393671, b: 0.8792453, a: 0.2901961}
+    - _Color: {r: 1, g: 0.4766898, b: 0, a: 1}
   m_BuildTextureStacks: []
