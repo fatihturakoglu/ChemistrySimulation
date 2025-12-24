@@ -23,6 +23,7 @@ public class OutlineSelection : MonoBehaviour {
                     highlight.gameObject.GetComponent<Outline>().enabled = true;
                 }
                 else {
+                    Debug.Log("asd");
                     Outline outline = highlight.gameObject.AddComponent<Outline>();
                     outline.enabled = true;
                 }
