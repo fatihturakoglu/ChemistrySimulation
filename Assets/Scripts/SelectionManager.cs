@@ -2,6 +2,7 @@ using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -12,7 +13,7 @@ public class SelectionManager : MonoBehaviour
     public class OnIngredientAddedEventArgs : EventArgs {
         public LabObject labObject;
     }
-
+    [SerializeField] private LayerMask interactableLayer = new LayerMask();
     [SerializeField] private Transform addingPositionTransform; //cauldron altýndaki addingposition nesnesi
     private Transform selectedIngredient, highlight;
 
@@ -28,13 +29,13 @@ public class SelectionManager : MonoBehaviour
     private void Update() {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (!EventSystem.current.IsPointerOverGameObject() &&
-                Physics.Raycast(ray, out RaycastHit raycastHit)) 
+                Physics.Raycast(ray, out RaycastHit raycastHit, Mathf.Infinity, interactableLayer)) 
         {
             highlight = raycastHit.transform;
-            if (Input.GetMouseButtonDown(0) && highlight.CompareTag("Item")) {
+            if (Input.GetMouseButtonDown(0) && highlight.TryGetComponent<LabObject>(out LabObject labObject)) { //highlight.CompareTag("Item")
                 if (!isAdding) {
-                    if (highlight.TryGetComponent(out Rigidbody rb))
-                        AddSolidIngredient(highlight, rb);
+                    if (!labObject.GetLabObjectSO().isLiquid)
+                        AddSolidIngredient(highlight);
                     else 
                         AddReusableIngredient(highlight);
                 }
@@ -64,14 +65,13 @@ public class SelectionManager : MonoBehaviour
 
         PlayAddAnimation(selectedIngredient);
     }
-    private void AddSolidIngredient(Transform highlight, Rigidbody rb) {
+    private void AddSolidIngredient(Transform highlight) {
         selectedIngredient = highlight; //- 1.3f
         var ingredientPos = addingPositionTransform.position;
         ingredientPos.z += 0.13f; //beherin merkezi
         selectedIngredient.position = ingredientPos;
-        
-        rb.isKinematic = false;
-        rb.useGravity = true;
+
+        AdjustRigidbodies(highlight);
 
         addingTimeCounter = addingTime / 4;
         isAdding = true;
@@ -79,12 +79,39 @@ public class SelectionManager : MonoBehaviour
         Debug.Log("Katý malzeme ekleniyor...");
     }
 
+    private void AdjustRigidbodies(Transform transform) {
+        var rb = transform.GetComponent<Rigidbody>();
+
+        if (transform.GetComponent<LabObject>().GetLabObjectSO().hasMultipleMeshes) {
+            Destroy(rb); //parent'deki rb
+            Destroy(transform.GetComponent<Collider>()); //parent'de collider olmak zorunda
+
+            BoxCollider c = transform.AddComponent<BoxCollider>();
+            c.size = new Vector3(0.01f, 0.01f, 0.01f);
+
+            var colliders = transform.GetComponentsInChildren<Collider>();
+            foreach (Collider col in colliders) {
+                if (col.transform == transform) continue;
+
+                col.enabled = true;
+                col.transform.AddComponent<Rigidbody>();
+            }
+
+
+        }
+        else {
+            rb.isKinematic = false;
+            rb.useGravity = true;
+        }
+    }
+
     private void HandleAddingIngredient() {
         if (isAdding) {
             addingTimeCounter -= Time.deltaTime;
             if (selectedIngredient != null && addingTimeCounter <= 0f) {
                 //malzemenin masadaki konumunu ve rotasyonuna geri döndürüyor
-                if (!selectedIngredient.TryGetComponent(out Rigidbody rb)) {
+                if (selectedIngredient.TryGetComponent(out LabObject labObject) 
+                    && labObject.GetLabObjectSO().isLiquid) {
                     selectedIngredient.position = lastIngredientPosition;
                     selectedIngredient.rotation = lastIngredientRotation;
                 }

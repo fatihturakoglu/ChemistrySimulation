@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 8842770078195962845}
   - component: {fileID: 312376375427379850}
   - component: {fileID: 497598421498627713}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SilverNitrate
-  m_TagString: Item
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -109,7 +109,6 @@ GameObject:
   - component: {fileID: 637336957613417445}
   - component: {fileID: 8125269833815388325}
   - component: {fileID: 1073372240639762927}
-  - component: {fileID: 5599049077538608691}
   m_Layer: 0
   m_Name: Mesh
   m_TagString: Untagged
@@ -182,26 +181,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &5599049077538608691
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5279665875784489706}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}

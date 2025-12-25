@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 8110075152701976023}
   - component: {fileID: 6096165711509749840}
   - component: {fileID: 8709394544841149864}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: AmmoniaSolution
-  m_TagString: Item
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

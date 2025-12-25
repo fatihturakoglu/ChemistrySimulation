@@ -7,6 +7,7 @@ public class OutlineSelection : MonoBehaviour {
     private Transform highlight;
     private Transform selection;
     private RaycastHit raycastHit;
+    [SerializeField] private LayerMask interactableLayer = new LayerMask();
 
     void Update() {
         // Highlight
@@ -15,15 +16,15 @@ public class OutlineSelection : MonoBehaviour {
             highlight = null;
         }
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(ray, out raycastHit)) //Make sure you have EventSystem in the hierarchy before using EventSystem
+        if (!EventSystem.current.IsPointerOverGameObject()
+            && Physics.Raycast(ray, out raycastHit, Mathf.Infinity, interactableLayer)) 
         {
             highlight = raycastHit.transform;
-            if (highlight.CompareTag("Item") && highlight != selection) {
+            if (highlight != selection) { //highlight.GetComponent<LabObject>() highlight.CompareTag("Item")
                 if (highlight.gameObject.GetComponent<Outline>() != null) {
                     highlight.gameObject.GetComponent<Outline>().enabled = true;
                 }
                 else {
-                    Debug.Log("asd");
                     Outline outline = highlight.gameObject.AddComponent<Outline>();
                     outline.enabled = true;
                 }

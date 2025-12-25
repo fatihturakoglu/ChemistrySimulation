@@ -10,6 +10,7 @@ public class LabObjectSO : ScriptableObject
     public Transform prefab;
     public bool isReusable; //ingredientmanager'da kullanmadýk, orada rb olup olmamasýna göre ayarladýk
     public bool isLiquid;
+    public bool hasMultipleMeshes;
 
     public Color color;
 }

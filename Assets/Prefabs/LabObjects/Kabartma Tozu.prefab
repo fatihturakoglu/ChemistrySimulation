@@ -181,9 +181,9 @@ GameObject:
   - component: {fileID: 5932799221477685267}
   - component: {fileID: 2856531826892668144}
   - component: {fileID: 6749045976973381025}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Kabartma Tozu
-  m_TagString: Item
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

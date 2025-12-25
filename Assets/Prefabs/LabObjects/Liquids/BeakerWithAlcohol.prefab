@@ -202,9 +202,9 @@ GameObject:
   - component: {fileID: 8812965699712737081}
   - component: {fileID: 235146826632552368}
   - component: {fileID: 7686114946043148073}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BeakerWithAlcohol
-  m_TagString: Item
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

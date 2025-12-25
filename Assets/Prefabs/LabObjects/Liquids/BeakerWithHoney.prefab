@@ -95,9 +95,9 @@ GameObject:
   - component: {fileID: 6084183066043132482}
   - component: {fileID: 9133520065038483050}
   - component: {fileID: 4586535093497804881}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BeakerWithHoney
-  m_TagString: Item
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

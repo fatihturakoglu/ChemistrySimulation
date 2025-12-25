@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c520473da1f99fa4b9773b320af54086, type: 3}
+  m_Name: SilverMirrorRecipe
+  m_EditorClassIdentifier: 
+  recipeName: SilverMirror
+  requiredIngredients:
+  - {fileID: 11400000, guid: 83ae2e8d53cde5741a108466d10de673, type: 2}
+  - {fileID: 11400000, guid: 052f489fa50ca87449bb6638e9ddc65c, type: 2}
+  - {fileID: 11400000, guid: 3921b48a34db0054bbbe4d1d04e24e75, type: 2}
+  - {fileID: 11400000, guid: 7bc7204900377bc4d933361341892662, type: 2}
+  reaction: {fileID: 7731366933653288144, guid: 9b06cf3ecd1494d4b996f380ad878e0e,
+    type: 3}

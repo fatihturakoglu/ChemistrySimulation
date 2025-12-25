@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c520473da1f99fa4b9773b320af54086, type: 3}
-  m_Name: SodiumAndWaterReaction
+  m_Name: DensityTowerRecipe
   m_EditorClassIdentifier: 
-  recipeName: SodiumAndWater
+  recipeName: DensityTower
   requiredIngredients:
-  - {fileID: 11400000, guid: 9e024b7036845764bb3fb5f91b2ec089, type: 2}
-  - {fileID: 11400000, guid: 96a0eb7b257537048a03e71320e00c99, type: 2}
-  reaction: {fileID: 2181926753104930031, guid: d828ac74261ac254eadd8e83d573d715,
+  - {fileID: 11400000, guid: fac91b56d5c0d19428c01a6fb8d713e7, type: 2}
+  - {fileID: 11400000, guid: dec0648e9d3760e44b6db0acada436d2, type: 2}
+  - {fileID: 11400000, guid: b4f4d0dda8627544c87debc5f3eba3ef, type: 2}
+  reaction: {fileID: 1907664956072459548, guid: a7c23673867dcb3469fd6d54120e6ef8,
     type: 3}

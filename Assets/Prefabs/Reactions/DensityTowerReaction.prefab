@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2895453714888382834}
   - component: {fileID: 4579970575338039807}
   m_Layer: 0
-  m_Name: DensityTower
+  m_Name: DensityTowerReaction
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
