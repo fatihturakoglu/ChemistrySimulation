@@ -44,3 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 053cea00493adbd4c8f8f10fb7ba7604, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  silverMirrorMaterial: {fileID: 2100000, guid: da1e2e4761321f04ab257285abbd3d82,
+    type: 2}
+  mainLiquidMaterial: {fileID: 2100000, guid: 869b0e808acc9b84c9b990e59a128691, type: 2}
