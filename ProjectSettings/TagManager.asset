@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Selectable
   - Item
+  - ChemistryBook
   layers:
   - Default
   - TransparentFX
