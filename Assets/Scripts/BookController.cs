@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class BookController : MonoBehaviour
 {
-    public GameObject kitapPaneli; // Canvas içindeki Panel
+    public GameObject kitapPaneli; // Ana Panel
+    public GameObject[] sayfalar;  // Hazırladığın sayfa Image'larını buraya sürükle
+    private int aktifSayfaIndex = 0;
 
     void Update()
     {
-        // Fare sol tık basıldığında
         if (Input.GetMouseButtonDown(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -16,7 +17,6 @@ public class BookController : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit))
             {
-                // Objeyi ismiyle değil, "Kitap" etiketiyle kontrol ediyoruz
                 if (hit.collider.CompareTag("ChemistryBook"))
                 {
                     KitabiAc();
@@ -28,14 +28,42 @@ public class BookController : MonoBehaviour
     public void KitabiAc()
     {
         kitapPaneli.SetActive(true);
-        // Fareyi serbest bırakmak (UI etkileşimi için önemli olabilir)
+        aktifSayfaIndex = 0; // Kitap her açıldığında ilk sayfadan başlar
+        SayfalariGuncelle();
+
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+    }
+
+    public void SonrakiSayfa()
+    {
+        if (aktifSayfaIndex < sayfalar.Length - 1)
+        {
+            aktifSayfaIndex++;
+            SayfalariGuncelle();
+        }
+    }
+
+    public void OncekiSayfa()
+    {
+        if (aktifSayfaIndex > 0)
+        {
+            aktifSayfaIndex--;
+            SayfalariGuncelle();
+        }
+    }
+
+    private void SayfalariGuncelle()
+    {
+        // Tüm sayfaları kapat, sadece aktif olanı aç
+        for (int i = 0; i < sayfalar.Length; i++)
+        {
+            sayfalar[i].SetActive(i == aktifSayfaIndex);
+        }
     }
 
     public void KitabiKapat()
     {
         kitapPaneli.SetActive(false);
-        // FPS kontrolü varsa burada fareyi tekrar kilitleyebilirsiniz
     }
 }

@@ -943,6 +943,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3232941427314590393, guid: 850be753ee44cda4db257fb315c8d113,
+        type: 3}
+      propertyPath: m_text
+      value: 1. Deney Sodyum'un Su ile Patlama Deneyi
+      objectReference: {fileID: 0}
     - target: {fileID: 9124894934052628183, guid: 850be753ee44cda4db257fb315c8d113,
         type: 3}
       propertyPath: m_Pivot.x
@@ -1228,11 +1233,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: chemistryPage2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7483791482745802997, guid: 80bc3f43a2b30d3498d0b967a7127c5d,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
