@@ -17,6 +17,7 @@ public class BookController : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit))
             {
+                Debug.Log("Vurulan Obje: " + hit.collider.name); // Konsolda neye tıkladığını gör
                 if (hit.collider.CompareTag("ChemistryBook"))
                 {
                     KitabiAc();

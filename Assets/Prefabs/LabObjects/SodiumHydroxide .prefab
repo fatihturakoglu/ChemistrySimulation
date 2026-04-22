@@ -221,6 +221,7 @@ GameObject:
   - component: {fileID: 2918519929240649427}
   - component: {fileID: 2090930924849382101}
   - component: {fileID: 4357498097772310484}
+  - component: {fileID: 3484715544557580779}
   m_Layer: 6
   m_Name: 'SodiumHydroxide '
   m_TagString: Item
@@ -256,7 +257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d5d6bef33f4a1f4d91c81031a954a5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  labObjectSO: {fileID: 11400000, guid: 7bc7204900377bc4d933361341892662, type: 2}
+  labObjectSO: {fileID: 11400000, guid: c9cea25f5ccd26c46b7544982a9d7fca, type: 2}
 --- !u!65 &4357498097772310484
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -278,6 +279,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.2, y: 0.01, z: 0.19}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3484715544557580779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3715853042762181961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd82f9b4ce62d74e9dd04561dedd97d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  item: {fileID: 11400000, guid: 1e5c8e713820ec748b3a7f1a7e4dd610, type: 2}
 --- !u!1 &5311560387877947598
 GameObject:
   m_ObjectHideFlags: 0

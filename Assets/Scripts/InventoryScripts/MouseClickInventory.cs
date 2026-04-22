@@ -16,14 +16,26 @@ public class MouseClickInventory : MonoBehaviour
     public KeyCode etkilesimTusu = KeyCode.E;
 
     [Header("UI Ayarları")]
-    public TextMeshProUGUI etkilesimYazisi;
-    public Vector3 yaziOffseti = new Vector3(0, 0.5f, 0);
+    public TextMeshProUGUI etkilesimYazisi; // basmak için e tuşu yazısı
+    public Vector3 yaziOffseti = new Vector3(0, 0.15f, 0);
 
     private Item hedeflenenDunyaEsyasi; // Yerden alınacak eşya
     private ItemPlace hedeflenenMasaSlotu; // Masadaki koyulacak yer
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            if (hedeflenenDunyaEsyasi != null && hedeflenenDunyaEsyasi.item != null)
+            {
+                ItemInspectionManager.Instance.StartInspection(hedeflenenDunyaEsyasi.item);
+            }
+            else if (hedeflenenMasaSlotu != null && hedeflenenMasaSlotu.isOccupied)
+            {
+                ItemInspectionManager.Instance.StartInspection(hedeflenenMasaSlotu.placedItem);
+            }
+        }
+
         EtkilesimKontrolu();
 
         if (Input.GetKeyDown(etkilesimTusu))
@@ -39,7 +51,48 @@ public class MouseClickInventory : MonoBehaviour
                 EsyayiMasayaKoy();
             }
         }
+        
+
     }
+
+
+    //void EtkilesimKontrolu()
+    //{
+    //    Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+    //    RaycastHit hit;
+
+    //    if (Physics.Raycast(ray, out hit, etkilesimMesafesi))
+    //    {
+    //        // 1. DURUM: Yerdeki bir eşyaya mı bakıyoruz?
+    //        Item worldItem = hit.collider.GetComponent<Item>();
+    //        // 2. DURUM: Masadaki bir slota mı bakıyoruz?
+    //        ItemPlace chemSlot = hit.collider.GetComponent<ItemPlace>();
+
+    //        if (worldItem != null)
+    //        {
+    //            SetTarget(worldItem, null, hit.transform.position, "Almak için [" + etkilesimTusu + "]");
+    //        }
+    //        else if (chemSlot != null)
+    //        {
+    //            if (!chemSlot.isOccupied)
+    //            {
+    //                SetTarget(null, chemSlot, hit.transform.position, "Koymak için [" + etkilesimTusu + "]");
+    //            }
+    //            else
+    //            {
+    //                SetTarget(null, chemSlot, hit.transform.position, "Eşyayı Geri Al [" + etkilesimTusu + "]");
+    //            }
+    //        }
+    //        else
+    //        {
+    //            Sifirla();
+    //        }
+    //    }
+    //    else
+    //    {
+    //        Sifirla();
+    //    }
+    //}
 
     void EtkilesimKontrolu()
     {
@@ -48,24 +101,27 @@ public class MouseClickInventory : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, etkilesimMesafesi))
         {
-            // 1. DURUM: Yerdeki bir eşyaya mı bakıyoruz?
             Item worldItem = hit.collider.GetComponent<Item>();
-            // 2. DURUM: Masadaki bir slota mı bakıyoruz?
             ItemPlace chemSlot = hit.collider.GetComponent<ItemPlace>();
 
             if (worldItem != null)
             {
-                SetTarget(worldItem, null, hit.transform.position, "Almak için [" + etkilesimTusu + "]");
+                // BURASI DEĞİŞTİ: worldItem.item içindeki ismi aldık
+                string esyaIsmi = worldItem.item != null ? worldItem.item.itemName : "Eşya";
+                SetTarget(worldItem, null, hit.transform.position, " Almak için [" + etkilesimTusu + "]" +   esyaIsmi);
             }
             else if (chemSlot != null)
             {
                 if (!chemSlot.isOccupied)
                 {
-                    SetTarget(null, chemSlot, hit.transform.position, "Koymak için [" + etkilesimTusu + "]");
+                    // Masadaki boş yer için
+                    SetTarget(null, chemSlot, hit.transform.position, "Buraya Koy [" + etkilesimTusu + "]");
                 }
                 else
                 {
-                    SetTarget(null, chemSlot, hit.transform.position, "Eşyayı Geri Al [" + etkilesimTusu + "]");
+                    // BURASI DEĞİŞTİ: Masadaki eşyanın ismini aldık
+                    string esyaIsmi = chemSlot.placedItem != null ? chemSlot.placedItem.itemName : "Eşya";
+                    SetTarget(null, chemSlot, hit.transform.position, esyaIsmi + " Geri Al [" + etkilesimTusu + "]");
                 }
             }
             else

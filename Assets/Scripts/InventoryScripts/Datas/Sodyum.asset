@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9301228ef65451438e144596593df12, type: 3}
+  m_Name: Sodyum
+  m_EditorClassIdentifier: 
+  itemName: Sodyum
+  itemDescription: Sodyum
+  itemIcon: {fileID: 21300000, guid: 27915ddff6915b04cbd7debb602da8a3, type: 3}
+  itemPrefab: {fileID: 1830043714732494158, guid: 21b28e74c29a40d46ae1f3f765102d74,
+    type: 3}

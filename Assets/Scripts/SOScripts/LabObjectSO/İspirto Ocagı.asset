@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed160b478b23873498fd87d4fefd0bfc, type: 3}
+  m_Name: "\u0130spirto Ocag\u0131"
+  m_EditorClassIdentifier: 
+  objectName: "\u0130spirto Ocag\u0131"
+  prefab: {fileID: 7153311247515591101, guid: 1028413806c80674689b3fe57ba8e4c9, type: 3}
+  isReusable: 1
+  isLiquid: 0
+  hasMultipleMeshes: 0
+  color: {r: 0, g: 0, b: 0, a: 0}

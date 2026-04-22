@@ -95,6 +95,7 @@ GameObject:
   - component: {fileID: 6084183066043132482}
   - component: {fileID: 9133520065038483050}
   - component: {fileID: 4586535093497804881}
+  - component: {fileID: 5308458586183853210}
   m_Layer: 6
   m_Name: BeakerWithHoney
   m_TagString: Untagged
@@ -131,7 +132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d5d6bef33f4a1f4d91c81031a954a5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  labObjectSO: {fileID: 11400000, guid: dec0648e9d3760e44b6db0acada436d2, type: 2}
+  labObjectSO: {fileID: 11400000, guid: 41688c9d83d560a46a28acb0bc70dc0c, type: 2}
 --- !u!136 &4586535093497804881
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -154,7 +155,20 @@ CapsuleCollider:
   m_Radius: 0.1
   m_Height: 0.21
   m_Direction: 1
-  m_Center: {x: 0, y: 0.07, z: 0}
+  m_Center: {x: 0, y: 0.01, z: 0}
+--- !u!114 &5308458586183853210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 974346373652005818}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd82f9b4ce62d74e9dd04561dedd97d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  item: {fileID: 11400000, guid: 5bddc1e6133ef434780c4fbe319b6815, type: 2}
 --- !u!1 &7851859882240315464
 GameObject:
   m_ObjectHideFlags: 0

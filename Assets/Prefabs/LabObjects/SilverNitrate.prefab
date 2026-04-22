@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8842770078195962845}
   - component: {fileID: 312376375427379850}
   - component: {fileID: 497598421498627713}
+  - component: {fileID: 2771654135747421527}
   m_Layer: 6
   m_Name: SilverNitrate
   m_TagString: Untagged
@@ -47,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d5d6bef33f4a1f4d91c81031a954a5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  labObjectSO: {fileID: 11400000, guid: 3921b48a34db0054bbbe4d1d04e24e75, type: 2}
+  labObjectSO: {fileID: 11400000, guid: de3416a06d7d42b44a3d39c10091597c, type: 2}
 --- !u!54 &312376375427379850
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -98,6 +99,19 @@ CapsuleCollider:
   m_Height: 0.1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2771654135747421527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3009973803526726249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd82f9b4ce62d74e9dd04561dedd97d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  item: {fileID: 11400000, guid: 46bb0f9ccf8fd0f4f8658a439259207d, type: 2}
 --- !u!1 &5279665875784489706
 GameObject:
   m_ObjectHideFlags: 0

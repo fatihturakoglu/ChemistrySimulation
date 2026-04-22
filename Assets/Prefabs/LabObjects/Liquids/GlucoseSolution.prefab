@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7010953912883361653}
   - component: {fileID: 293826286532910720}
   - component: {fileID: 6109479067268221092}
+  - component: {fileID: 1092036657213136725}
   m_Layer: 6
   m_Name: GlucoseSolution
   m_TagString: Untagged
@@ -70,7 +71,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d5d6bef33f4a1f4d91c81031a954a5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  labObjectSO: {fileID: 11400000, guid: 052f489fa50ca87449bb6638e9ddc65c, type: 2}
+  labObjectSO: {fileID: 11400000, guid: c3ee2960f0096194bacc5c7c6ec5073e, type: 2}
+--- !u!114 &1092036657213136725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3233666059162649940}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd82f9b4ce62d74e9dd04561dedd97d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  item: {fileID: 11400000, guid: 834efced4da086d4d839e3d8ab394ab9, type: 2}
 --- !u!1001 &916618822059069037
 PrefabInstance:
   m_ObjectHideFlags: 0

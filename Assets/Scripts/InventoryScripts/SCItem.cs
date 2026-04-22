@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,4 +10,5 @@ public class SCItem : ScriptableObject
     public string itemDescription;
     public Sprite itemIcon;
     public GameObject itemPrefab;
+    [TextArea(3, 10)] public string detailedInfo; // F'ye basınca görünecek detaylı kimya bilgisi
 }

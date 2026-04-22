@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9301228ef65451438e144596593df12, type: 3}
+  m_Name: "Kat\u0131 \u0130yot"
+  m_EditorClassIdentifier: 
+  itemName: "Kat\u0131 \u0130yot"
+  itemDescription: "Kat\u0131 \u0130yot"
+  itemIcon: {fileID: 21300000, guid: 6da907b656fd4d1468194220265cbd55, type: 3}
+  itemPrefab: {fileID: 3647528824751516645, guid: 97adcdb4b2aae1b46a807db14eb9402b,
+    type: 3}

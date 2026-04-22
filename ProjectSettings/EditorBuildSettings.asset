@@ -6,6 +6,18 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/GameScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/Scenes/NewScenes/Sodyum-Su deneyi.unity
+    guid: 079a6660ca1ed8342b27011801dce3bd
+  - enabled: 1
+    path: "Assets/Scenes/DeneySahneleri/\u0130yot S\xFCblimle\u015Fmesi.unity"
+    guid: 9cc42a62983a32c42b0fcc705d376071
+  - enabled: 1
+    path: Assets/Scenes/DeneySahneleri/GumusAyna.unity
+    guid: d799794c6004b5e47a3689f98aef3171
+  - enabled: 1
+    path: Assets/Scenes/DeneySahneleri/Yogunluk Kulesi.unity
+    guid: d6dce6904a2f731409f9d1853acd9896
+  - enabled: 1
+    path: Assets/Scenes/DeneySahneleri/Asit-Baz Deneyi.unity
+    guid: 9da955e93f79576438348afe751634da
   m_configObjects: {}

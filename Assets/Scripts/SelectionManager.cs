@@ -132,8 +132,9 @@ public class SelectionManager : MonoBehaviour
             });
         }
     }
-    private void PlayAddAnimation(Transform selectedIngredient) {
-        float timeOffset = 0.05f; //eðer animasyon süresi adding süresinden fazla olursa animasyonda takýlý kalýyor
+    private void PlayAddAnimation(Transform selectedIngredient)
+    {
+        float timeOffset = 0.05f; //eðer animasyon süresi adding süresinden fazla olursa animasyonda takil, kaliyor
         float spillAnimationCycleDuration = (addingTime - timeOffset) / 2;
 
         selectedIngredient.DORotate(Vector3.right * 90f, spillAnimationCycleDuration)
@@ -142,11 +143,26 @@ public class SelectionManager : MonoBehaviour
 
         var liquidSpillAnimation = selectedIngredient.GetComponentInChildren<ParticleSystem>();
 
-        if (liquidSpillAnimation != null) 
+        if (liquidSpillAnimation != null)
             StartCoroutine(PlayEffectRoutine(liquidSpillAnimation, .2f));
 
     }
+    //private void PlayAddAnimation(Transform selectedIngredient)
+    //{
+    //    float animationDuration = 1f;
 
+    //    // .SetLink ekleyerek objenin silinmesi durumunda tween'i güvenli hale getiriyoruz
+    //    selectedIngredient.DORotate(Vector3.right * 60f, animationDuration / 2)
+    //        .SetLoops(2, LoopType.Yoyo)
+    //        .SetEase(Ease.InOutSine)
+    //        .SetLink(selectedIngredient.gameObject); // <-- BU SATIRI EKLE
+
+    //    var liquidSpillAnimation = selectedIngredient.GetComponentInChildren<ParticleSystem>();
+    //    if (liquidSpillAnimation != null)
+    //    {
+    //        StartCoroutine(PlayEffectRoutine(liquidSpillAnimation, 0.15f));
+    //    }
+    //}
     private IEnumerator PlayEffectRoutine(ParticleSystem effect, float duration) {
         yield return new WaitForSeconds(duration);
         effect.Play();

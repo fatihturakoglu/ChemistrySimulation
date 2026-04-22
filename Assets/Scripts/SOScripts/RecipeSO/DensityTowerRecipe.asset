@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c520473da1f99fa4b9773b320af54086, type: 3}
+  m_Name: DensityTowerRecipe
+  m_EditorClassIdentifier: 
+  recipeName: DensityTower
+  requiredIngredients:
+  - {fileID: 11400000, guid: 02fc6cd07fe3316459178125e14e147f, type: 2}
+  - {fileID: 11400000, guid: 41688c9d83d560a46a28acb0bc70dc0c, type: 2}
+  - {fileID: 11400000, guid: d9acf967ff5352f488fe841c08395fb1, type: 2}
+  reaction: {fileID: 1907664956072459548, guid: a7c23673867dcb3469fd6d54120e6ef8,
+    type: 3}
