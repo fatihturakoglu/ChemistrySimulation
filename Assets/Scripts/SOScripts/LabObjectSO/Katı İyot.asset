@@ -13,8 +13,12 @@ MonoBehaviour:
   m_Name: "Kat\u0131 \u0130yot"
   m_EditorClassIdentifier: 
   objectName: "Kat\u0131 \u0130yot"
-  prefab: {fileID: 103995770571483451, guid: 97adcdb4b2aae1b46a807db14eb9402b, type: 3}
-  isReusable: 0
+  prefab: {fileID: 103995770571483451, guid: cbf025bf2674359459e957432dbfed7c, type: 3}
+  visualPrefabInBeaker: {fileID: 103995770571483451, guid: cbf025bf2674359459e957432dbfed7c,
+    type: 3}
+  isReusable: 1
   isLiquid: 0
   hasMultipleMeshes: 1
+  animationType: 2
   color: {r: 0, g: 0, b: 0, a: 0}
+  density: 0

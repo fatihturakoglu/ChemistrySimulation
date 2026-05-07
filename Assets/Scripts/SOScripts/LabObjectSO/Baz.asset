@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectName: Baz
   prefab: {fileID: 2185338843108146683, guid: 0162682fc6bc170408995dd85119de25, type: 3}
+  SolidCreatingLocation: {fileID: 0}
   isReusable: 0
   isLiquid: 1
   hasMultipleMeshes: 0
+  animationType: 1
   color: {r: 1, g: 1, b: 1, a: 0.81960785}
+  density: 0

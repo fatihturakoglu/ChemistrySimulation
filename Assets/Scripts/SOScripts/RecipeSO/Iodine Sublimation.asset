@@ -14,6 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   recipeName: iyot Deneyi
   requiredIngredients:
-  - {fileID: 11400000, guid: 4dc1d8494b56d214cbe54a0ee2931526, type: 2}
+  - {fileID: 11400000, guid: 7173ec2130c350547be3c17ffbd41bcf, type: 2}
   reaction: {fileID: 5978246562113747651, guid: 71530755b6431fa4da44b4b535059b20,
     type: 3}
+  requiresSpecificOrder: 0
+  requiresSpecificDropCount: 0
+  dropTargetName: 
+  requiredDropCount: 0

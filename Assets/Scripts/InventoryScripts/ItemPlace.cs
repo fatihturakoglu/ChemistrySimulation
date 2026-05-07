@@ -14,17 +14,43 @@ public class ItemPlace : MonoBehaviour
         placedItem = item;
         isOccupied = true;
 
-        // Eşyanın 3D modelini masada oluştur
         if (item.itemPrefab != null)
         {
             currentVisual = Instantiate(item.itemPrefab, spawnPoint.position, spawnPoint.rotation);
             currentVisual.transform.SetParent(this.transform);
+
+            // --- ZEMİNE OTURTMA MANTIĞI ---
+            SnapToGround(currentVisual);
         }
+    }
+
+    private void SnapToGround(GameObject obj)
+    {
+        // Objede Renderer (görsel) var mı bak
+        MeshRenderer renderer = obj.GetComponentInChildren<MeshRenderer>();
+        if (renderer == null) return;
+
+        // Objenin en alt noktasının dünya koordinatındaki yerini bul
+        float bottomY = renderer.bounds.min.y;
+
+        // Spawn noktasının Y koordinatı ile objenin en altı arasındaki farkı bul
+        float offset = spawnPoint.position.y - bottomY;
+
+        // Objeyi bu fark kadar yukarı/aşağı kaydır
+        obj.transform.position += new Vector3(0, offset, 0);
     }
 
     public void RemoveItem()
     {
-        Destroy(currentVisual);
+        if (currentVisual != null)
+        {
+            // GÜVENLİK: Objeyi Destroy etmeden önce anında pasif yapıyoruz.
+            // Böylece Raycast "E"ye bastığın mikro saniyede bu objeye çarpamaz.
+            currentVisual.SetActive(false);
+            Destroy(currentVisual);
+            currentVisual = null;
+        }
+
         placedItem = null;
         isOccupied = false;
     }

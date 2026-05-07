@@ -1,14 +1,18 @@
-﻿using UnityEngine;
-using VContainer;
-using VContainer.Unity;
+﻿using DG.Tweening;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
+using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
 public class BeakerManager : MonoBehaviour, IBeaker
 {
     [SerializeField] private SelectionManager ingredientManager;
     [SerializeField] private List<RecipeSO> allRecipes;
+
+    [Header("Görsel Referanslar")]
+    [SerializeField] private SilverMirrorVisualizer visualizer;
 
     private DensityTowerVisualizer _towerVis;
     private LiquidMixerVisualizer _mixerVis;
@@ -17,9 +21,10 @@ public class BeakerManager : MonoBehaviour, IBeaker
 
     private List<LabObjectSO> _liquidDataList = new List<LabObjectSO>();
     private List<LabObject> _allIngredients = new List<LabObject>();
+    private Dictionary<string, int> _dropCounts = new Dictionary<string, int>();
+    private List<string> _addedOrderNames = new List<string>();
 
-    // --- ASİT-BAZ ÖZEL DEĞİŞKENLERİ GERİ GELDİ ---
-    private int _baseDrops = 0;
+    private Color _currentMixedColor = Color.white;
 
     [Inject]
     public void Construct(ColorMixerService colorMixer, IObjectResolver container)
@@ -30,107 +35,283 @@ public class BeakerManager : MonoBehaviour, IBeaker
 
     private void Start()
     {
+        if (visualizer == null) visualizer = GetComponent<SilverMirrorVisualizer>();
         _towerVis = GetComponent<DensityTowerVisualizer>();
         _mixerVis = GetComponent<LiquidMixerVisualizer>();
 
         if (ingredientManager != null)
             ingredientManager.OnIngredientAdded += (s, e) => AddIngredient(e.labObject);
-    }
 
-    public void AddIngredient(LabObject labObject)
-    {
-        LabObjectSO so = labObject.GetLabObjectSO();
-
-        // Asit-Baz kontrolü için asit var mı bakıyoruz
-        bool alreadyHasAcid = _allIngredients.Any(x => x.GetLabObjectSO().objectName == "Asit");
-
-        // 1. LİSTE GÜNCELLEME (Asit-Baz özel mantığıyla)
-        UpdateIngredientLists(labObject, so, alreadyHasAcid);
-
-        // 2. GÖRSEL GÜNCELLEME
-        if (so.isLiquid)
+        if (visualizer != null)
         {
-            _liquidDataList.Add(so);
-
-            if (_towerVis != null)
-                _towerVis.UpdateDensityVisuals(_liquidDataList);
-            else if (_mixerVis != null)
+            if (visualizer.brownPrecipitate != null) visualizer.brownPrecipitate.SetActive(false);
+            if (visualizer.liquidRenderer != null)
             {
-                _colorMixer.AddColor(so.color);
-                _mixerVis.UpdateMixedVisuals(_colorMixer.GetMixedColor(), _liquidDataList.Count);
+                visualizer.liquidRenderer.gameObject.SetActive(false);
+                visualizer.liquidRenderer.transform.localScale = new Vector3(1, 0, 1);
+                _currentMixedColor = visualizer.liquidRenderer.material.color;
             }
         }
 
-        // 3. REÇETE KONTROLÜ
-        CheckRecipes(so.objectName, alreadyHasAcid);
+        if (SpiritLamp.Instance != null)
+        {
+            SpiritLamp.Instance.OnLightAction += (s, e) => TryStartMirrorReaction();
+        }
     }
 
-    // --- ESKİ MANTIK: LİSTE YÖNETİMİ ---
-    private void UpdateIngredientLists(LabObject labObject, LabObjectSO so, bool hasAcid)
+    public void AddIngredient(LabObject labObject, float animationDuration = 1.5f)
     {
-        if (so.objectName == "Asit" && !hasAcid)
+        if (labObject == null) return;
+        LabObjectSO so = labObject.GetLabObjectSO();
+
+        if (so.isLiquid)
         {
+            // KONTROL: Eğer bu spesifik LabObject zaten eklenmişse tekrar ekleme 
+            // (Veya çok hızlı tıklamalarda aynı tür sıvının çift eklenmesini önlemek için)
+            if (_allIngredients.Contains(labObject)) return;
+
+            _liquidDataList.Add(so);
+            _addedOrderNames.Add(so.objectName);
             _allIngredients.Add(labObject);
+
+            StartParallelRise(so, animationDuration);
+            UpdateColorVisuals(so, animationDuration);
         }
-        else if (so.objectName == "Baz")
+        else
         {
-            // Bazı listeye sadece bir kere ekle ama damla sayısını artır
-            if (!_allIngredients.Any(x => x.GetLabObjectSO().objectName == "Baz"))
+            // Katı maddeler için mantık
+            if (!_allIngredients.Contains(labObject))
+            {
+                _addedOrderNames.Add(so.objectName);
                 _allIngredients.Add(labObject);
-
-            _baseDrops++;
-            Debug.Log("Baz Damlası: " + _baseDrops);
+            }
         }
-        else if (!_allIngredients.Contains(labObject))
+
+        if (!so.isLiquid && !so.isReusable) HandleChemicalDissolution(labObject, so);
+        HandleSilverMirrorVisuals(so.objectName);
+        CheckRecipes(so.objectName);
+    }
+
+    public void StartParallelRise(LabObjectSO so, float duration)
+    {
+        // Yoğunluk kulesi mi yoksa gümüş aynası sahnesi mi ayrımı
+        if (_towerVis != null)
         {
-            _allIngredients.Add(labObject);
+            // Yoğunluk kulesinde MainLiquid (Gümüş aynası sıvısı) KAPALI olmalı
+            if (visualizer != null && visualizer.liquidRenderer != null)
+                visualizer.liquidRenderer.gameObject.SetActive(false);
+
+            _towerVis.UpdateDensityVisuals(_liquidDataList, duration);
+        }
+        else if (visualizer != null)
+        {
+            visualizer.PlayParallelRise(so, duration);
         }
     }
 
-    private void CheckRecipes(string addedName, bool hasAcid)
+    private void UpdateColorVisuals(LabObjectSO addedSO, float duration)
     {
-        // --- ASİT-BAZ ÖZEL FİLTRESİ ---
-        // Eğer baz ekleniyorsa ve bu bir asit-baz deneyi ise (ortamda asit varsa) 5 damla kuralını işlet.
-        // Ama Sodyum-Su gibi deneylerde "Asit" yoksa bu filtreyi bypass etmeliyiz.
-        if (addedName == "Baz" && hasAcid)
+        // Kule sahnesinde renk karışımı olmaz
+        if (_towerVis != null || visualizer == null || visualizer.liquidRenderer == null) return;
+
+        if (!visualizer.liquidRenderer.gameObject.activeSelf)
+            visualizer.liquidRenderer.gameObject.SetActive(true);
+
+        if (_liquidDataList.Count == 1)
+            _currentMixedColor = addedSO.color;
+        else
+            _currentMixedColor = Color.Lerp(_currentMixedColor, addedSO.color, addedSO.colorIntensity);
+
+        visualizer.liquidRenderer.material.DOColor(_currentMixedColor, duration).SetEase(Ease.Linear);
+    }
+
+    private void HandleChemicalDissolution(LabObject obj, LabObjectSO so)
+    {
+        if (obj == null) return;
+
+        // KONTROL: Çözücü listesinde uygun sıvı var mı?
+        bool canDissolve = _liquidDataList.Any(liq =>
+            so.solubleIn == null || so.solubleIn.Count == 0 ||
+            so.solubleIn.Any(s => s.Equals(liq.objectName, StringComparison.OrdinalIgnoreCase)));
+
+        if (canDissolve)
         {
-            if (_baseDrops < 5) return;
+            // Önceki animasyonları durdur
+            obj.transform.DOKill();
+
+            // 1. Katı madde (NaOH vb.) çözünürken küçülerek yok olur
+            obj.transform.DOScale(Vector3.zero, 3.5f).SetEase(Ease.InQuad).OnComplete(() =>
+            {
+                // 2. İSİM KONTROLÜ: Boşlukları temizleyerek kontrol et
+                if (so.objectName.Trim() == "SodiumHydroxide")
+                {
+                    // 3. DENEY SIRALAMASI: Kapta Gümüş Nitrat var mı?
+                    if (_addedOrderNames.Contains("SilverNitrate"))
+                    {
+                        // 4. GÖRSEL TETİKLEME: Ölçekle oynamadan sadece SetActive(true) yapar
+                        if (visualizer != null)
+                        {
+                            visualizer.ShowBrownCloud();
+                            Debug.Log("<color=brown>KİMYA:</color> Gümüş oksit çökeltisi (kahverengi) oluştu!");
+                        }
+                    }
+                }
+
+                // 5. BELLEK YÖNETİMİ: Çözünen objeyi sahneden sil
+                if (obj != null) Destroy(obj.gameObject);
+            });
         }
+    }   
 
-        // Sadece asit eklendiğinde tepkime hemen başlamasın (Asit-Baz deneyi koruması)
-        if (addedName == "Asit") return;
+    // TEK BİR METOT OLARAK BIRAKILDI (Hata giderildi)
+    private void HandleSilverMirrorVisuals(string addedName)
+    {
+        if (visualizer == null) return;
 
-        // --- GENEL REÇETE SİSTEMİ ---
+        // Amonyak bir sıvı olduğu için döküldüğü an berraklaştırma sürecini başlatır
+        if (addedName == "AmmoniaSolution" && _addedOrderNames.Contains("SodiumHydroxide"))
+        {
+            visualizer.ClearCloud();
+        }
+    }
+
+
+    public List<LabObjectSO> GetLiquidData()
+    {
+        return _liquidDataList;
+    }
+
+    private void TryStartMirrorReaction()
+{
+    // 1. KONTROL: Kapta Glikoz var mı?
+    if (_addedOrderNames.Contains("GlucoseSolution"))
+    {
+        Debug.Log("<color=orange>OCAK YANDI:</color> Glikoz bulundu, tarif kontrol ediliyor...");
+        
+        // "Heated" parametresini malzeme listesine eklemeden direkt tarif döngüsüne giriyoruz
+        ForceCheckSilverMirror(); 
+    }
+    else
+    {
+        Debug.LogWarning("Ocağı yaktın ama kapta Glikoz yok!");
+    }
+}
+
+private void ForceCheckSilverMirror()
+{
+    // Gümüş aynası tarifini listeden bulup zorla çalıştıralım
+    var mirrorRecipe = allRecipes.FirstOrDefault(r => r.recipeName == "SilverMirror");
+
+    if (mirrorRecipe != null)
+    {
+        // Malzeme listesini al
+        var currentSOs = _allIngredients.Select(x => x.GetLabObjectSO()).ToList();
+        
+        // Eksik malzeme var mı kontrol et
+        bool hasAll = !mirrorRecipe.requiredIngredients.Except(currentSOs).Any();
+
+        if (hasAll)
+        {
+            Debug.Log("<color=silver>BAŞARILI:</color> Gümüş aynası instantiate ediliyor!");
+            _container.Instantiate(mirrorRecipe.reaction, transform.position + Vector3.up * 0.15f, Quaternion.identity);
+            
+            // Ayna oluştuğu için beheri SIFIRLAMIYORUZ (ResetBeaker çağırma!)
+        }
+        else
+        {
+            Debug.LogError("Gümüş aynası için malzemeler eksik!");
+        }
+    }
+}
+
+    private void CheckRecipes(string addedName)
+    {
+        // 1. ÖN HAZIRLIK: Sahneden silinmiş objeleri listeden temizle ve verileri çek
+        _allIngredients.RemoveAll(item => item == null);
         var currentSOs = _allIngredients.Select(x => x.GetLabObjectSO()).ToList();
 
         foreach (var recipe in allRecipes)
         {
-            // Reçetedeki malzemeler ile beherin içindekiler tam uyuşuyor mu?
-            bool match = !recipe.requiredIngredients.Except(currentSOs).Any() &&
-                         currentSOs.Count == recipe.requiredIngredients.Count;
+            // 2. TEMEL İÇERİK KONTROLÜ
+            // Kapta gereken tüm malzemeler (en az gereken miktarda) var mı?
+            bool hasAllIngredients = !recipe.requiredIngredients.Except(currentSOs).Any();
+            bool hasCorrectCount = recipe.requiredIngredients.Count <= currentSOs.Count;
 
-            if (match)
+            if (hasAllIngredients && hasCorrectCount)
             {
-                Debug.Log("Reçete Tamamlandı: " + recipe.recipeName);
-                _container.Instantiate(recipe.reaction, transform.position + Vector3.up * 0.15f, Quaternion.identity);
-                ResetBeaker();
+                // 3. ÖZEL ŞART: SIRALAMA KONTROLÜ
+                if (recipe.requiresSpecificOrder)
+                {
+                    bool orderCorrect = true;
+                    for (int i = 0; i < recipe.requiredIngredients.Count; i++)
+                    {
+                        // Eklenen isim listesi ile tarifteki isimleri karşılaştır
+                        if (_addedOrderNames.Count <= i || _addedOrderNames[i] != recipe.requiredIngredients[i].objectName)
+                        {
+                            orderCorrect = false;
+                            break;
+                        }
+                    }
+                    if (!orderCorrect) continue; // Sıralama yanlışsa bu tarifi pas geç
+                }
+
+                // 4. ÖZEL ŞART: DAMLA SAYISI KONTROLÜ
+                if (recipe.requiresSpecificDropCount)
+                {
+                    if (!_dropCounts.ContainsKey(recipe.dropTargetName) || _dropCounts[recipe.dropTargetName] < recipe.requiredDropCount)
+                    {
+                        continue; // Damla sayısı yetersizse pas geç
+                    }
+                }
+
+                // --- REAKSİYON BAŞLANGICI ---
+
+                // Reaksiyon prefabını (gaz, patlama, ayna efekti vb.) oluştur
+                if (recipe.reaction != null)
+                {
+                    _container.Instantiate(recipe.reaction, transform.position + Vector3.up * 0.15f, Quaternion.identity);
+                    Debug.Log($"<color=cyan>DENEY:</color> {recipe.recipeName} başarıyla tetiklendi!");
+                }
+
+                // DÖNGÜDEN ÇIK: Bir reaksiyon tetiklendikten sonra aynı anda başkası tetiklenmesin
                 break;
             }
         }
     }
 
+    // SelectionManager'ın kuleyi tetikleyebilmesi için eklediğimiz basit metot
+    public void TriggerTowerVisuals()
+    {
+        if (_towerVis != null)
+        {
+            _towerVis.UpdateDensityVisuals(_liquidDataList);
+        }
+    }
+
     public void ResetBeaker()
     {
+        if (visualizer != null && visualizer.liquidRenderer != null)
+        {
+            visualizer.liquidRenderer.transform.DOKill();
+            visualizer.liquidRenderer.material.DOKill();
+        }
+
         _allIngredients.Clear();
         _liquidDataList.Clear();
         _colorMixer.Clear();
-        _baseDrops = 0; // Damla sayısını sıfırla
+        _dropCounts.Clear();
+        _addedOrderNames.Clear();
+        _currentMixedColor = Color.white;
 
-        if (_towerVis) _towerVis.UpdateDensityVisuals(_liquidDataList);
-        if (_mixerVis) _mixerVis.UpdateMixedVisuals(Color.white, 0);
+        if (visualizer != null)
+        {
+            if (visualizer.brownPrecipitate != null) visualizer.brownPrecipitate.SetActive(false);
+            if (visualizer.liquidRenderer != null)
+                visualizer.liquidRenderer.transform.DOScaleY(0, 1f).OnComplete(() => visualizer.liquidRenderer.gameObject.SetActive(false));
+        }
     }
 
-    public MeshRenderer MainLiquid => GetComponentInChildren<MeshRenderer>();
+    public MeshRenderer MainLiquid => visualizer != null ? visualizer.liquidRenderer : GetComponentInChildren<MeshRenderer>();
     public MeshRenderer[] LayeredLiquids => GetComponentsInChildren<MeshRenderer>();
     public Vector3 ReactionPosition => transform.position + Vector3.up * 0.15f;
 }

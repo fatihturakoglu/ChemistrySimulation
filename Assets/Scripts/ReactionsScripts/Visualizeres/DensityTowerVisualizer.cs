@@ -1,49 +1,62 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using DG.Tweening; // DOTween kütüphanesini eklemeyi unutma
+using DG.Tweening;
 
 public class DensityTowerVisualizer : MonoBehaviour
 {
-    [SerializeField] private MeshRenderer[] layers; // Element 0 en alt olmalı
-    [SerializeField] private float animationDuration = 1.2f; // Yer değiştirme hızı
+    [SerializeField] private MeshRenderer[] layers;
+    [SerializeField] private float animationDuration = 1.2f;
 
+    /// <summary>
+    /// Geriye dönük uyumluluk için (Eski çağrılar bozulmasın diye)
+    /// </summary>
     public void UpdateDensityVisuals(List<LabObjectSO> liquidData)
     {
-        // Önce sahnede olmayan üst katmanları kapat
-        for (int i = liquidData.Count; i < layers.Length; i++)
-        {
-            layers[i].gameObject.SetActive(false);
-        }
+        UpdateDensityVisuals(liquidData, animationDuration);
+    }
 
-        // Yoğunluğa göre sırala (En yoğun en alta)
+    /// <summary>
+    /// Dökülme süresiyle paralel yükselme animasyonunu yöneten ana metod.
+    /// </summary>
+    public void UpdateDensityVisuals(List<LabObjectSO> liquidData, float customDuration)
+    {
+        if (layers == null || layers.Length == 0) return;
+
+        // Yoğunluk sıralaması
         var sorted = liquidData.OrderByDescending(x => x.density).ToList();
 
-        for (int i = 0; i < sorted.Count; i++)
+        for (int i = 0; i < layers.Length; i++)
         {
-            if (i < layers.Length)
-            {
-                MeshRenderer currentLayer = layers[i];
-                Color targetColor = sorted[i].color;
+            MeshRenderer currentLayer = layers[i];
 
-                // Eğer katman kapalıysa (ilk kez ekleniyorsa)
+            // KRİTİK: Sadece listedeki eleman sayısı kadar katmanı aktif et
+            if (i < sorted.Count)
+            {
+                LabObjectSO data = sorted[i];
+                float targetHeight = 0.35f;
+
+                // Eğer katman henüz aktif değilse, animasyonla aç
                 if (!currentLayer.gameObject.activeSelf)
                 {
                     currentLayer.gameObject.SetActive(true);
-                    // Başlangıçta şeffaf veya beyazdan başlasın
-                    currentLayer.material.color = new Color(targetColor.r, targetColor.g, targetColor.b, 0);
-                    currentLayer.material.DOColor(targetColor, animationDuration);
+                    currentLayer.transform.DOKill(); // Eski animasyonu temizle
+                    currentLayer.transform.localScale = new Vector3(1, 0, 1);
+                    currentLayer.material.color = data.color;
+
+                    currentLayer.transform.DOScaleY(targetHeight, customDuration).SetEase(Ease.Linear);
                 }
                 else
                 {
-                    // Katman zaten açıksa (yer değiştirme oluyorsa)
-                    // DOTween ile mevcut renkten hedef renge yumuşak geçiş yap
-                    currentLayer.material.DOColor(targetColor, animationDuration)
-                        .SetEase(Ease.InOutQuad); // Daha doğal bir süzülme hissi
+                    // Zaten aktif olan katmanların yerini ve rengini koru/güncelle
+                    currentLayer.material.DOColor(data.color, 0.25f);
+                    currentLayer.transform.localScale = new Vector3(1, targetHeight, 1);
                 }
-
-                // Dolgun görünüm için scale ayarı
-                currentLayer.transform.localScale = new Vector3(1, 0.35f, 1);
+            }
+            else
+            {
+                // Veri listesinde karşılığı olmayan katmanları kesinlikle kapat
+                currentLayer.gameObject.SetActive(false);
             }
         }
     }

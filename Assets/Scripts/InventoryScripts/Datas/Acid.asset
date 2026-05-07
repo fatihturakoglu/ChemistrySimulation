@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9301228ef65451438e144596593df12, type: 3}
+  m_Name: Acid
+  m_EditorClassIdentifier: 
+  itemName: Asit
+  itemDescription: Asit
+  itemIcon: {fileID: 21300000, guid: e24fc260855080b43a896d39792ff495, type: 3}
+  itemPrefab: {fileID: 2571698874693296473, guid: c4ab7a679ae259f4994bd8d98bfdf007,
+    type: 3}
+  detailedInfo: "deneme yaz\u0131s\u0131"

@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectName: Asit
   prefab: {fileID: 5134217705509448290, guid: fec32ba5d3f19a84091ea81177e6d22b, type: 3}
-  isReusable: 0
+  visualPrefabInBeaker: {fileID: 0}
+  isReusable: 1
   isLiquid: 1
   hasMultipleMeshes: 0
+  animationType: 1
   color: {r: 1, g: 1, b: 1, a: 0.78431374}
+  density: 0

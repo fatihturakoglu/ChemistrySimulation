@@ -15,5 +15,6 @@ MonoBehaviour:
   itemName: "Kat\u0131 \u0130yot"
   itemDescription: "Kat\u0131 \u0130yot"
   itemIcon: {fileID: 21300000, guid: 6da907b656fd4d1468194220265cbd55, type: 3}
-  itemPrefab: {fileID: 3647528824751516645, guid: 97adcdb4b2aae1b46a807db14eb9402b,
+  itemPrefab: {fileID: 8040418390966460160, guid: 640c359cb2b2f58468ef69a717cc7593,
     type: 3}
+  detailedInfo: 

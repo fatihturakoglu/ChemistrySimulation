@@ -1,171 +1,199 @@
-using DG.Tweening;
+ï»¿using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor;
-using UnityEngine;
+using System.Linq;
+using DG.Tweening;
 using UnityEngine.EventSystems;
 
 public class SelectionManager : MonoBehaviour
 {
     public event EventHandler<OnIngredientAddedEventArgs> OnIngredientAdded;
-    public class OnIngredientAddedEventArgs : EventArgs {
+    public class OnIngredientAddedEventArgs : EventArgs
+    {
         public LabObject labObject;
     }
-    [SerializeField] private LayerMask interactableLayer = new LayerMask();
-    [SerializeField] private Transform addingPositionTransform; //cauldron altýndaki addingposition nesnesi
-    private Transform selectedIngredient, highlight;
 
+    [SerializeField] private LayerMask interactableLayer;
+    [SerializeField] private Transform addingPositionTransform;
+    [SerializeField] private Transform spawnPositionTransform;
+
+    private Transform selectedIngredient, highlight;
     private float addingTime = 2f;
     private float addingTimeCounter;
-
     private Vector3 lastIngredientPosition;
     private Quaternion lastIngredientRotation;
-
     private bool isAdding;
-    
 
-    private void Update() {
+    private void Update()
+    {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (!EventSystem.current.IsPointerOverGameObject() &&
-                Physics.Raycast(ray, out RaycastHit raycastHit, Mathf.Infinity, interactableLayer)) 
+            Physics.Raycast(ray, out RaycastHit raycastHit, Mathf.Infinity, interactableLayer))
         {
             highlight = raycastHit.transform;
-            if (Input.GetMouseButtonDown(0) && highlight.TryGetComponent<LabObject>(out LabObject labObject)) { //highlight.CompareTag("Item")
-                if (!isAdding) {
-                    if (!labObject.GetLabObjectSO().isLiquid)
-                        AddSolidIngredient(highlight);
-                    else 
-                        AddReusableIngredient(highlight);
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                if (highlight.TryGetComponent<LabObject>(out LabObject labObj))
+                {
+                    if (!isAdding)
+                    {
+                        var so = labObj.GetLabObjectSO();
+
+                        if (so.animationType == LabAnimationType.None)
+                        {
+                            AddSolidIngredient(highlight);
+                        }
+                        else
+                        {
+                            AddReusableIngredient(highlight, so.animationType);
+                        }
+                    }
                 }
             }
         }
-        else { //raycast ile bir nesne algýlanmýyorsa
+        else
+        {
             highlight = null;
         }
 
         HandleAddingIngredient();
-
     }
-    private void AddReusableIngredient(Transform highlight) {
-        selectedIngredient = highlight;
 
-        //malzemenin masadaki konumunu ve rotasyonunu tutuyor
+    private void AddSolidIngredient(Transform target)
+    {
+        selectedIngredient = target;
+        Vector3 pos = addingPositionTransform.position;
+        pos.z += 0.13f;
+        selectedIngredient.position = pos;
+
+        var rb = selectedIngredient.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+            rb.useGravity = true;
+        }
+
+        addingTimeCounter = addingTime / 4;
+        isAdding = true;
+    }
+
+    private void AddReusableIngredient(Transform target, LabAnimationType animType)
+    {
+        selectedIngredient = target;
         lastIngredientPosition = selectedIngredient.position;
         lastIngredientRotation = selectedIngredient.rotation;
 
         selectedIngredient.position = addingPositionTransform.position;
-        selectedIngredient.transform.rotation = Quaternion.Euler(0, 0, 0);
+        selectedIngredient.rotation = Quaternion.identity;
 
         addingTimeCounter = addingTime;
         isAdding = true;
-        
-        Debug.Log("Malzeme ekleniyor...");
 
-        PlayAddAnimation(selectedIngredient);
-    }
-    private void AddSolidIngredient(Transform highlight) {
-        selectedIngredient = highlight; //- 1.3f
-        var ingredientPos = addingPositionTransform.position;
-        ingredientPos.z += 0.13f; //beherin merkezi
-        selectedIngredient.position = ingredientPos;
-
-        AdjustRigidbodies(highlight);
-
-        addingTimeCounter = addingTime / 4;
-        isAdding = true;
-        
-        Debug.Log("Katý malzeme ekleniyor...");
+        PlayAddAnimation(selectedIngredient, animType);
     }
 
-    private void AdjustRigidbodies(Transform transform) {
-        var rb = transform.GetComponent<Rigidbody>();
+    private void PlayAddAnimation(Transform target, LabAnimationType animType)
+    {
+        float duration = (addingTime - 0.05f) / 2;
+        LabObject labObj = target.GetComponent<LabObject>();
+        if (labObj == null) return;
 
-        if (transform.GetComponent<LabObject>().GetLabObjectSO().hasMultipleMeshes) {
-            Destroy(rb); //parent'deki rb
-            Destroy(transform.GetComponent<Collider>()); //parent'de collider olmak zorunda
-
-            BoxCollider c = transform.AddComponent<BoxCollider>();
-            c.size = new Vector3(0.01f, 0.01f, 0.01f);
-
-            var colliders = transform.GetComponentsInChildren<Collider>();
-            foreach (Collider col in colliders) {
-                if (col.transform == transform) continue;
-
-                col.enabled = true;
-                col.transform.AddComponent<Rigidbody>();
-            }
-
-
-        }
-        else {
-            rb.isKinematic = false;
-            rb.useGravity = true;
-        }
-    }
-
-    private void HandleAddingIngredient() {
-        if (isAdding) {
-            addingTimeCounter -= Time.deltaTime;
-            if (selectedIngredient != null && addingTimeCounter <= 0f) {
-                //malzemenin masadaki konumunu ve rotasyonuna geri döndürüyor
-                if (selectedIngredient.TryGetComponent(out LabObject labObject) 
-                    && labObject.GetLabObjectSO().isLiquid) {
-                    selectedIngredient.position = lastIngredientPosition;
-                    selectedIngredient.rotation = lastIngredientRotation;
+        target.DORotate(new Vector3(90, 0, 0), duration)
+            .SetLoops(2, LoopType.Yoyo)
+            .SetEase(Ease.OutCubic)
+            .OnStepComplete(() => {
+                // ÅžiÅŸe 90 dereceye ulaÅŸtÄ±ÄŸÄ±nda bardaÄŸa ekleme metodunu sadece 1 kez Ã§aÄŸÄ±rÄ±yoruz
+                var beaker = FindObjectOfType<BeakerManager>();
+                if (beaker != null)
+                {
+                    beaker.AddIngredient(labObj, duration);
                 }
+            });
 
-                Debug.Log("Malzeme eklendi!");
+        if (animType == LabAnimationType.LiquidPour)
+        {
+            var ps = target.GetComponentInChildren<ParticleSystem>();
+            if (ps != null) StartCoroutine(PlayEffectRoutine(ps, duration * 0.3f));
+        }
+        else if (animType == LabAnimationType.SolidSpill)
+        {
+            StartCoroutine(ReleaseSolidPelletsAfterDelay(labObj, duration * 0.5f));
+        }
+    }
 
-                TryAddingIngredientToBeaker(selectedIngredient);
+    // KRÄ°TÄ°K: Bu metodun sadece BÄ°R KEZ tanÄ±mlandÄ±ÄŸÄ±ndan emin olun
+    private void HandleAddingIngredient()
+    {
+        if (isAdding)
+        {
+            addingTimeCounter -= Time.deltaTime;
+            if (selectedIngredient != null && addingTimeCounter <= 0f)
+            {
+                if (selectedIngredient.TryGetComponent<LabObject>(out LabObject labObj))
+                {
+                    if (labObj.GetLabObjectSO().isReusable)
+                    {
+                        selectedIngredient.position = lastIngredientPosition;
+                        selectedIngredient.rotation = lastIngredientRotation;
+                    }
+                    // Not: AddIngredient zaten OnStepComplete iÃ§inde Ã§aÄŸrÄ±ldÄ±ÄŸÄ± iÃ§in burada tekrar tetiklemiyoruz.
+                }
                 selectedIngredient = null;
                 isAdding = false;
-
             }
         }
     }
-    private void TryAddingIngredientToBeaker(Transform selectedIngredient) { //karýþým hazýrlanmak istiyorsa
-        if (selectedIngredient.TryGetComponent(out LabObject labObject)) {   //muhakkak nesnelerde labobject scripti olmalý
-            OnIngredientAdded?.Invoke(this, new OnIngredientAddedEventArgs { //yoksa malzeme eklendi sayýlmaz
-                labObject = labObject
-            });
+
+    private IEnumerator ReleaseSolidPelletsAfterDelay(LabObject bottle, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        LabObjectSO so = bottle.GetLabObjectSO();
+
+        if (so.visualPrefabInBeaker != null)
+        {
+            Transform spawnedVisual = Instantiate(so.visualPrefabInBeaker, spawnPositionTransform.position, spawnPositionTransform.rotation);
+            StartCoroutine(AnimatePowderSpam(spawnedVisual, 1f));
+
+            if (spawnedVisual.TryGetComponent<LabObject>(out LabObject powderLabObj))
+            {
+                OnIngredientAdded?.Invoke(this, new OnIngredientAddedEventArgs { labObject = powderLabObj });
+            }
+        }
+
+        var spillEffect = bottle.GetComponentInChildren<ParticleSystem>();
+        if (spillEffect != null) spillEffect.Play();
+    }
+
+    private IEnumerator AnimatePowderSpam(Transform powderParent, float totalDuration)
+    {
+        var pellets = powderParent.GetComponentsInChildren<MeshRenderer>().ToList();
+        foreach (var pellet in pellets) pellet.enabled = false;
+
+        System.Random rng = new System.Random();
+        int n = pellets.Count;
+        while (n > 1)
+        {
+            n--;
+            int k = rng.Next(n + 1);
+            var value = pellets[k];
+            pellets[k] = pellets[n];
+            pellets[n] = value;
+        }
+
+        float delayBetweenSpams = totalDuration / pellets.Count;
+        foreach (var pellet in pellets)
+        {
+            if (pellet == null) continue;
+            pellet.enabled = true;
+            yield return new WaitForSeconds(delayBetweenSpams);
         }
     }
-    private void PlayAddAnimation(Transform selectedIngredient)
+
+    private IEnumerator PlayEffectRoutine(ParticleSystem effect, float delay)
     {
-        float timeOffset = 0.05f; //eðer animasyon süresi adding süresinden fazla olursa animasyonda takil, kaliyor
-        float spillAnimationCycleDuration = (addingTime - timeOffset) / 2;
-
-        selectedIngredient.DORotate(Vector3.right * 90f, spillAnimationCycleDuration)
-            .SetLoops(2, LoopType.Yoyo)
-            .SetEase(Ease.OutCubic); //Ease.OutCubic //Ease.OutCirc //Ease.OutBack
-
-        var liquidSpillAnimation = selectedIngredient.GetComponentInChildren<ParticleSystem>();
-
-        if (liquidSpillAnimation != null)
-            StartCoroutine(PlayEffectRoutine(liquidSpillAnimation, .2f));
-
-    }
-    //private void PlayAddAnimation(Transform selectedIngredient)
-    //{
-    //    float animationDuration = 1f;
-
-    //    // .SetLink ekleyerek objenin silinmesi durumunda tween'i güvenli hale getiriyoruz
-    //    selectedIngredient.DORotate(Vector3.right * 60f, animationDuration / 2)
-    //        .SetLoops(2, LoopType.Yoyo)
-    //        .SetEase(Ease.InOutSine)
-    //        .SetLink(selectedIngredient.gameObject); // <-- BU SATIRI EKLE
-
-    //    var liquidSpillAnimation = selectedIngredient.GetComponentInChildren<ParticleSystem>();
-    //    if (liquidSpillAnimation != null)
-    //    {
-    //        StartCoroutine(PlayEffectRoutine(liquidSpillAnimation, 0.15f));
-    //    }
-    //}
-    private IEnumerator PlayEffectRoutine(ParticleSystem effect, float duration) {
-        yield return new WaitForSeconds(duration);
+        yield return new WaitForSeconds(delay);
         effect.Play();
     }
-
 }

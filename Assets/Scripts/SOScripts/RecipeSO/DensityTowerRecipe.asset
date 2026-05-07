@@ -16,6 +16,11 @@ MonoBehaviour:
   requiredIngredients:
   - {fileID: 11400000, guid: 02fc6cd07fe3316459178125e14e147f, type: 2}
   - {fileID: 11400000, guid: 41688c9d83d560a46a28acb0bc70dc0c, type: 2}
-  - {fileID: 11400000, guid: d9acf967ff5352f488fe841c08395fb1, type: 2}
+  - {fileID: 11400000, guid: 6ae6ea9c895cd194ba0f0160de65b737, type: 2}
+  - {fileID: 11400000, guid: bfef17968d5734d4ba8389c438eebfdb, type: 2}
+  - {fileID: 11400000, guid: 34bc489bf17197f4985ab4840f782cad, type: 2}
   reaction: {fileID: 1907664956072459548, guid: a7c23673867dcb3469fd6d54120e6ef8,
     type: 3}
+  requiresSpecificDropCount: 0
+  dropTargetName: 
+  requiredDropCount: 0

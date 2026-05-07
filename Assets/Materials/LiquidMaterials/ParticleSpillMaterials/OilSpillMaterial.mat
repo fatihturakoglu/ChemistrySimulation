@@ -62,5 +62,5 @@ Material:
     - _ScrollSpeed: 0.5
     - _TwrilStrenght: 5.59
     m_Colors:
-    - _Color: {r: 0.4264151, g: 0.32764882, b: 0.21159841, a: 1}
+    - _Color: {r: 0.69803923, g: 0.69803923, b: 0.13725491, a: 1}
   m_BuildTextureStacks: []

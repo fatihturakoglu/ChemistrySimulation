@@ -1,70 +1,73 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BookController : MonoBehaviour
 {
-    public GameObject kitapPaneli; // Ana Panel
-    public GameObject[] sayfalar;  // Hazırladığın sayfa Image'larını buraya sürükle
-    private int aktifSayfaIndex = 0;
+    [Header("UI Referansları")]
+    public GameObject bookUIPrefab;
+    public Transform canvasTransform;
+    private GameObject _activeBookUI;
+
+    [Header("Ayarlar")]
+    public string bookTag = "ChemistryBook";
 
     void Update()
     {
+        // Fare tıklaması kontrolü
         if (Input.GetMouseButtonDown(0))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+            HandleBookClick();
+        }
 
-            if (Physics.Raycast(ray, out hit))
+        // ESC ile kitabı kapatma (Opsiyonel ama kullanışlı)
+        if (Input.GetKeyDown(KeyCode.Escape) && _activeBookUI != null)
+        {
+            KitabiKapat();
+        }
+    }
+
+    private void HandleBookClick()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            if (hit.collider.CompareTag(bookTag))
             {
-                Debug.Log("Vurulan Obje: " + hit.collider.name); // Konsolda neye tıkladığını gör
-                if (hit.collider.CompareTag("ChemistryBook"))
-                {
-                    KitabiAc();
-                }
+                KitabiAc();
             }
         }
     }
 
     public void KitabiAc()
     {
-        kitapPaneli.SetActive(true);
-        aktifSayfaIndex = 0; // Kitap her açıldığında ilk sayfadan başlar
-        SayfalariGuncelle();
-
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-    }
-
-    public void SonrakiSayfa()
-    {
-        if (aktifSayfaIndex < sayfalar.Length - 1)
+        if (_activeBookUI == null)
         {
-            aktifSayfaIndex++;
-            SayfalariGuncelle();
+            _activeBookUI = Instantiate(bookUIPrefab, canvasTransform);
+
+            // KRİTİK SATIR: Prefab kapalıysa bile burada açıyoruz
+            _activeBookUI.SetActive(true);
+
+            RectTransform rt = _activeBookUI.GetComponent<RectTransform>();
+            if (rt != null)
+            {
+                rt.localPosition = Vector3.zero;
+            }
+
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
     }
 
-    public void OncekiSayfa()
-    {
-        if (aktifSayfaIndex > 0)
-        {
-            aktifSayfaIndex--;
-            SayfalariGuncelle();
-        }
-    }
-
-    private void SayfalariGuncelle()
-    {
-        // Tüm sayfaları kapat, sadece aktif olanı aç
-        for (int i = 0; i < sayfalar.Length; i++)
-        {
-            sayfalar[i].SetActive(i == aktifSayfaIndex);
-        }
-    }
-
+    // Parametresiz, tertemiz kapatma fonksiyonu
     public void KitabiKapat()
     {
-        kitapPaneli.SetActive(false);
+        if (_activeBookUI != null)
+        {
+            Destroy(_activeBookUI); // Obje tamamen silinsin
+            _activeBookUI = null;   // DEĞİŞKENİ BOŞALTIYORUZ (Tekrar açılabilmesi için kritik!)
+
+            // İmleci tekrar kilitlemek istersen (FPS karakterin varsa)
+            // Cursor.lockState = CursorLockMode.Locked;
+            // Cursor.visible = false;
+        }
     }
 }

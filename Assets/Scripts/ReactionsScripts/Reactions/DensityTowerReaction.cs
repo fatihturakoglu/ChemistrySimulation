@@ -5,7 +5,7 @@ public class DensityTowerReaction : MonoBehaviour
 {
     [SerializeField] private LabObjectSO[] liquids;
     private IBeaker _beaker;
-    private float life = 3f;
+    private float life = 10f; // Sadece mantıksal tetikleme için kısa bir süre yeterli
 
     [Inject]
     public void Construct(IBeaker beaker)
@@ -15,31 +15,13 @@ public class DensityTowerReaction : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("Yoğunluk Kulesi Tepkimesi");
+        Debug.Log("Yoğunluk Kulesi Tamamlandı!");
 
-        // Ana sıvıyı kapat
-        _beaker.MainLiquid.gameObject.SetActive(false);
-
-        // Katmanlı sıvıları aç ve renklerini ata
-        var layeredLiquids = _beaker.LayeredLiquids;
-        for (int i = 0; i < layeredLiquids.Length; i++)
-        {
-            if (i < liquids.Length) // Hata almamak için kontrol
-            {
-                layeredLiquids[i].gameObject.SetActive(true);
-                layeredLiquids[i].material.color = liquids[i].color;
-            }
-        }
+        // Bu script artık sadece görsel bir "başarı" efekti (belki konfeti veya ses) 
+        // tetiklemek için kullanılmalı. Sıvıların kontrolü zaten BeakerManager'da.
 
         Destroy(gameObject, life);
     }
 
-    private void OnDestroy()
-    {
-        // Tepkime bitince katmanları geri kapat
-        foreach (var layer in _beaker.LayeredLiquids)
-        {
-            layer.gameObject.SetActive(false);
-        }
-    }
+    // OnDestroy metodunu sildik çünkü katmanların kapanmasını istemiyoruz!
 }

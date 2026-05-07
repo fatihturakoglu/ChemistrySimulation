@@ -1,6 +1,6 @@
-﻿using VContainer;
+﻿using UnityEngine;
+using VContainer;
 using VContainer.Unity;
-using UnityEngine;
 
 public class ChemistryLifetimeScope : LifetimeScope
 {
@@ -9,13 +9,8 @@ public class ChemistryLifetimeScope : LifetimeScope
 
     protected override void Configure(IContainerBuilder builder)
     {
-        // 1. Saf C# Servisleri
         builder.Register<ColorMixerService>(Lifetime.Singleton);
-
-        // 2. Sahnedeki Objeler
         builder.RegisterComponent(selection);
-
-        // BeakerManager'ı hem kendisi hem de IBeaker interface'i olarak tanıtıyoruz
         builder.RegisterComponent(beaker).AsImplementedInterfaces().AsSelf();
     }
 }
